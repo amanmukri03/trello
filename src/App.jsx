@@ -11,7 +11,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 const App = () => {
 
   return (
-    <HashRouter basename="/trello">
     <div className='app-container'>
       <Routes>
         <Route path="/board" element={<Board/>}/>
@@ -23,7 +22,6 @@ const App = () => {
 
       </Routes>
     </div>
-    </HashRouter>
   )
 }
 
