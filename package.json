@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://amanmukri03.github.io/trello/",
+  "homepage": "https://amanmukri03.github.io/trello",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
