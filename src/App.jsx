@@ -10,7 +10,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/trello">
     <div className='app-container'>
       <Routes>
         <Route path="/login" element={<Login/>}/>
