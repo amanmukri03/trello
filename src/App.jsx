@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import'./styles/global.css'
-import {BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import {BrowserRouter, Routes, Route, useNavigate, HashRouter } from 'react-router-dom'
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Board from './pages/Board';
@@ -9,10 +9,12 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 
 const App = () => {
+
   return (
-    <BrowserRouter basename="/trello">
+    <HashRouter basename="/trello">
     <div className='app-container'>
       <Routes>
+        <Route path="/board" element={<Board/>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>}/>
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard/></ProtectedRoute>}/>
@@ -21,7 +23,7 @@ const App = () => {
 
       </Routes>
     </div>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
