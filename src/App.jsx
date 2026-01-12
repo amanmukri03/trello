@@ -6,39 +6,33 @@ import Register from './pages/Register'
 import Board from './pages/Board'
 import Dashboard from './pages/Dashboard'
 import ProtectedRoute from './components/ProtectedRoute'
+import Navbar from './components/Navbar'
+import Landing from './components/Landing'
 
 const App = () => {
   return (
-    <div className="app-container">
-      <HashRouter>
+    <>
+      <HashRouter> 
+    <Navbar/>
 
         <Routes>
-          <Route path="/" element={<Board />} />
+          <Route path='/' element={<Landing/>}/>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/board"
-            element={
-              <ProtectedRoute>
-                <Board />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>
+          } />
+          <Route path="/board" element={
+            <ProtectedRoute>
+              <Board />
+            </ProtectedRoute>
+          } />
 
           <Route path="*" element={<Login />} />
         </Routes>
       </HashRouter>
-    </div>
+
+  </>
   )
 }
 

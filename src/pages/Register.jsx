@@ -23,7 +23,7 @@ const Register = () => {
     navigate("/login");
   }
   return (
-    <div className='container d-flex justify-content-center align-items-center'>
+    <div className='container mt-5 d-flex justify-content-center align-items-center'>
       <div className="card p-4 shadow-sm" style={{ width: "400px" }}>
         <h3 className='text-center mb-3'>Register Account</h3>
         <form action="" onSubmit={handleSubmit}>

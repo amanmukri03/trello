@@ -30,14 +30,14 @@ const Login = () => {
             sessionStorage.setItem("token", res.data.token);
             sessionStorage.setItem("user", JSON.stringify(res.data.user));
 
-            navigate("/dashboard")
+            navigate("/dashboard");
         } catch (err) {
             setError(err.response?.data?.message || "Login failed");
         };
     };
 
     return (
-        <div className='container d-flex justify-content-center align-items-center' >
+        <div className='container mt-5 d-flex justify-content-center align-items-center' >
             <div className="card p-4 shadow-sm" style={{ width: '400px' }}>
                 <h3 className="text-center mb-3">Login</h3>
                 {error && <div className='alert alert-danger'>{error}</div>}
