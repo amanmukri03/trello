@@ -1,13 +1,12 @@
 /* ==================== CORE FIXES (ALL DEVICES) ==================== */
 
-/* Sidebar: Board name and three dots - ALWAYS SAME LINE */
+/* Sidebar: Board name and three dots alignment */
 .list-group-item.d-flex {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
   padding: 0.75rem 1rem !important;
   gap: 0.5rem;
-  flex-wrap: nowrap !important; /* ← Force same line */
 }
 
 .list-group-item.d-flex > span {
@@ -15,37 +14,33 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  min-width: 0; /* ← Allow text to shrink */
 }
 
 .list-group-item .dropdown {
   flex-shrink: 0;
-  margin-left: 0.5rem;
+  margin-left: auto;
 }
 
-/* Active board - LIGHTER BLUE (Three dots clearly visible) */
+/* Active board - Light blue background */
 .list-group-item.active {
-  background-color: #d1e7ff !important; /* ← Lighter blue */
-  border-color: #b3d7ff !important;
-  color: #084298 !important;
+  background-color: #cfe2ff !important;
+  border-color: #9ec5fe !important;
+  color: #052c65 !important;
 }
 
 .list-group-item.active .dropdown button {
-  color: #084298 !important; /* ← Dark three dots on light blue */
-  background-color: transparent !important;
+  color: #052c65 !important;
 }
 
 .list-group-item.active .dropdown button:hover {
-  background-color: rgba(0, 0, 0, 0.1) !important;
-  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
 /* Normal state three dots */
 .list-group-item .dropdown button {
-  color: #495057 !important; /* ← Darker for better visibility */
+  color: #6c757d !important;
   padding: 0.25rem !important;
   line-height: 1;
-  background-color: transparent !important;
 }
 
 .list-group-item .dropdown button:hover {
@@ -88,18 +83,16 @@
   background: #555;
 }
 
-/* ==================== DESKTOP (≥993px) - FIX TASKS GOING OUT OF SCREEN ==================== */
+/* ==================== DESKTOP (≥993px) ==================== */
 
 @media (min-width: 993px) {
-  /* Columns container - prevent overflow */
   .row.mt-3 {
+    overflow-x: auto;
+    overflow-y: visible;
     display: flex;
     flex-wrap: wrap;
-    overflow: visible; /* ← Changed from auto */
-    margin: 0 -15px;
   }
 
-  /* Column width - proper spacing */
   .col-4 {
     flex: 0 0 33.333333%;
     max-width: 33.333333%;
@@ -107,36 +100,15 @@
     margin-bottom: 20px;
   }
 
-  /* Card body - SCROLLABLE with proper height */
   .card-body[style*="minHeight"] {
-    min-height: 400px !important;
-    max-height: calc(100vh - 300px) !important; /* ← Responsive to viewport */
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
+    max-height: 70vh;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
-  /* Task cards - MUST stay within column */
   .card.mb-2.shadow-sm {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-bottom: 0.75rem !important;
-    box-sizing: border-box !important;
-  }
-
-  .card.mb-2.shadow-sm .card-body {
-    padding: 1rem !important;
-    word-wrap: break-word !important;
-    overflow-wrap: break-word !important;
-  }
-
-  /* Ensure all content is visible */
-  .card.mb-2.shadow-sm h6,
-  .card.mb-2.shadow-sm p,
-  .card.mb-2.shadow-sm small,
-  .card.mb-2.shadow-sm .badge {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+    width: 100%;
+    max-width: 100%;
   }
 }
 
@@ -156,25 +128,11 @@
   .col-4 {
     flex: 0 0 50%;
     max-width: 50%;
-    margin-bottom: 1rem;
   }
 
-  /* Card body scrollable */
   .card-body[style*="minHeight"] {
-    min-height: 350px !important;
-    max-height: calc(100vh - 250px) !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-  }
-
-  /* Task cards visible */
-  .card.mb-2.shadow-sm {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  .card.mb-2.shadow-sm .card-body {
-    padding: 0.875rem !important;
+    max-height: 60vh;
+    overflow-y: auto;
   }
 }
 
@@ -195,20 +153,9 @@
     width: 100% !important;
     margin-bottom: 1rem;
   }
-
-  /* Card content visible */
-  .card-body[style*="minHeight"] {
-    min-height: 350px !important;
-    max-height: 60vh !important;
-    overflow-y: auto !important;
-  }
-
-  .card.mb-2.shadow-sm .card-body {
-    padding: 0.875rem !important;
-  }
 }
 
-/* ==================== MOBILE (≤768px) - FIX CARD CONTENT NOT SHOWING ==================== */
+/* ==================== MOBILE (≤768px) ==================== */
 
 @media (max-width: 768px) {
   /* Sidebar - Collapsible */
@@ -261,41 +208,27 @@
     height: auto !important;
   }
 
-  /* Board list - FORCE SAME LINE */
+  /* Board list items */
   .list-group-item.d-flex {
-    padding: 0.65rem 0.75rem !important;
-    display: flex !important;
-    flex-wrap: nowrap !important;
+    padding: 0.5rem 0.75rem !important;
   }
 
   .list-group-item.d-flex > span {
-    font-size: 0.875rem !important;
-    max-width: calc(100% - 50px) !important; /* ← Leave space for three dots */
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-  }
-
-  /* Three dots button - proper size and visibility */
-  .list-group-item .dropdown {
-    flex-shrink: 0 !important;
-    margin-left: 0.5rem !important;
+    font-size: 0.9rem;
+    max-width: calc(100% - 40px);
   }
 
   .list-group-item .dropdown button {
-    min-width: 40px !important;
-    min-height: 40px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0.5rem !important;
-    background-color: transparent !important;
-    border: none !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .dropdown button svg {
-    width: 18px !important;
-    height: 18px !important;
+    width: 20px !important;
+    height: 20px !important;
   }
 
   /* Hide board description */
@@ -316,11 +249,10 @@
   }
 
   .col-4 {
-    flex: 0 0 88% !important;
-    max-width: 88% !important;
+    flex: 0 0 90% !important;
+    max-width: 90% !important;
     scroll-snap-align: start;
     padding: 0 0.5rem !important;
-    margin-bottom: 0 !important;
   }
 
   /* Scroll indicator */
@@ -337,73 +269,40 @@
     background: linear-gradient(to top, white, transparent);
   }
 
-  /* ✅ FIX: Card body - ENSURE CONTENT IS VISIBLE */
+  /* Card body - scrollable */
   .card-body[style*="minHeight"] {
-    min-height: 400px !important; /* ← Increased height */
-    max-height: calc(100vh - 200px) !important;
+    min-height: 350px !important;
+    max-height: 60vh !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
-    padding: 0.875rem !important;
-    display: block !important; /* ← Force display */
+    padding: 0.75rem !important;
   }
 
-  /* ✅ FIX: Task cards - MUST BE VISIBLE */
+  /* Task cards */
   .card.mb-2.shadow-sm {
     width: 100% !important;
-    max-width: 100% !important;
-    margin-bottom: 0.875rem !important;
-    display: block !important; /* ← Force display */
-    visibility: visible !important; /* ← Force visible */
-    opacity: 1 !important; /* ← Force opacity */
+    margin-bottom: 0.75rem !important;
   }
 
   .card.mb-2.shadow-sm .card-body {
-    padding: 0.875rem !important;
-    font-size: 0.875rem !important;
-    display: block !important;
-    min-height: auto !important;
+    padding: 0.75rem !important;
+    font-size: 0.85rem !important;
   }
 
-  /* ✅ FIX: All task content MUST be visible */
   .card.mb-2.shadow-sm h6 {
-    font-size: 0.95rem !important;
+    font-size: 0.9rem !important;
     margin-bottom: 0.5rem !important;
-    display: block !important;
-    visibility: visible !important;
   }
 
-  .card.mb-2.shadow-sm p {
-    font-size: 0.8rem !important;
-    margin-bottom: 0.4rem !important;
-    display: block !important;
-    visibility: visible !important;
-  }
-
-  .card.mb-2.shadow-sm small {
-    font-size: 0.75rem !important;
-    display: block !important;
-    visibility: visible !important;
-  }
-
+  .card.mb-2.shadow-sm p,
+  .card.mb-2.shadow-sm small,
   .card.mb-2.shadow-sm .badge {
-    font-size: 0.7rem !important;
-    padding: 0.25rem 0.5rem !important;
-    display: inline-block !important;
-    visibility: visible !important;
-  }
-
-  /* Timer, description, all elements visible */
-  .card.mb-2.shadow-sm .mb-2,
-  .card.mb-2.shadow-sm .p-2,
-  .card.mb-2.shadow-sm .bg-light,
-  .card.mb-2.shadow-sm .rounded {
-    display: block !important;
-    visibility: visible !important;
+    font-size: 0.75rem !important;
   }
 
   /* Column header */
   .card-header.fw-bold.d-flex {
-    padding: 0.875rem !important;
+    padding: 0.75rem !important;
   }
 
   .card-header .d-flex.align-items-center.gap-2 {
@@ -412,13 +311,13 @@
 
   /* Buttons */
   .btn-sm {
-    font-size: 0.8rem !important;
-    padding: 0.35rem 0.6rem !important;
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
   }
 
   .btn {
-    font-size: 0.85rem !important;
-    padding: 0.5rem 0.875rem !important;
+    font-size: 0.8rem !important;
+    padding: 0.4rem 0.8rem !important;
   }
 
   /* Touch targets */
@@ -437,9 +336,9 @@
 
   /* Alerts */
   .alert {
-    font-size: 0.85rem !important;
-    padding: 0.625rem 0.875rem !important;
-    margin-bottom: 0.875rem !important;
+    font-size: 0.8rem !important;
+    padding: 0.5rem 0.75rem !important;
+    margin-bottom: 0.75rem !important;
   }
 
   /* User role badge */
@@ -450,15 +349,11 @@
 
   /* Headers */
   h4 {
-    font-size: 1.3rem !important;
+    font-size: 1.25rem !important;
   }
 
   h5 {
-    font-size: 1.05rem !important;
-  }
-
-  h6 {
-    font-size: 0.95rem !important;
+    font-size: 1rem !important;
   }
 
   /* Page header - stack vertically */
@@ -499,8 +394,8 @@
 
   /* Dropdown menu */
   .dropdown-menu {
-    font-size: 0.875rem !important;
-    min-width: 150px !important;
+    font-size: 0.85rem !important;
+    min-width: 140px !important;
   }
 
   .dropdown-item {
@@ -515,8 +410,8 @@
 
   /* Priority badges */
   .badge {
-    font-size: 0.65rem !important;
-    padding: 0.25rem 0.5rem !important;
+    font-size: 0.6rem !important;
+    padding: 0.2rem 0.4rem !important;
   }
 }
 
@@ -524,23 +419,11 @@
 
 @media (max-width: 576px) {
   h4 {
-    font-size: 1.15rem !important;
+    font-size: 1.1rem !important;
   }
 
   h5 {
     font-size: 1rem !important;
-  }
-
-  /* Board name - even more compact */
-  .list-group-item.d-flex > span {
-    font-size: 0.85rem !important;
-    max-width: calc(100% - 45px) !important;
-  }
-
-  /* Columns wider on very small screens */
-  .col-4 {
-    flex: 0 0 92% !important;
-    max-width: 92% !important;
   }
 }
 
