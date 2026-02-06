@@ -38,6 +38,18 @@ const Dashboard = () => {
 
   const [runningTimers, setRunningTimers] = useState({});
 
+  // ✅ NEW: Board Edit/Delete States
+  const [showEditBoardModal, setShowEditBoardModal] = useState(false);
+  const [editingBoard, setEditingBoard] = useState(null);
+  const [showDeleteBoardDialog, setShowDeleteBoardDialog] = useState(false);
+  const [boardToDelete, setBoardToDelete] = useState(null);
+
+  // ✅ NEW: Column Edit/Delete States
+  const [showEditColumnModal, setShowEditColumnModal] = useState(false);
+  const [editingColumn, setEditingColumn] = useState(null);
+  const [showDeleteColumnDialog, setShowDeleteColumnDialog] = useState(false);
+  const [columnToDelete, setColumnToDelete] = useState(null);
+
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -52,7 +64,11 @@ const Dashboard = () => {
         const user = JSON.parse(userStr);
         setUserRole(user.role || "");
         setCurrentUser(user);
-        console.log("✅ Current User:", { role: user.role, id: user._id, name: user.name });
+        console.log("✅ Current User:", {
+          role: user.role,
+          id: user._id,
+          name: user.name,
+        });
         return;
       } catch (err) {
         console.error("Failed to parse user:", err);
@@ -161,7 +177,7 @@ const Dashboard = () => {
 
     socket.on("taskUpdated", (updatedTask) => {
       console.log("📡 Socket: taskUpdated received:", updatedTask);
-      
+
       setTasks((prev) => {
         const taskExists = prev.some((t) => t._id === updatedTask._id);
         if (!taskExists) {
@@ -209,23 +225,27 @@ const Dashboard = () => {
 
   // ✅ Helper: Find "In Progress" column intelligently
   const getInProgressColumn = () => {
-    return columns.find(col => {
-      const name = col.name.toLowerCase().replace(/[^a-z]/g, '');
-      return name === 'inprogress' || 
-             name === 'progress' || 
-             name === 'ongoing' ||
-             name === 'working';
+    return columns.find((col) => {
+      const name = col.name.toLowerCase().replace(/[^a-z]/g, "");
+      return (
+        name === "inprogress" ||
+        name === "progress" ||
+        name === "ongoing" ||
+        name === "working"
+      );
     });
   };
 
   // ✅ Helper: Check if column is "Done/Completed"
   const isDoneColumn = (column) => {
     if (!column) return false;
-    const name = column.name.toLowerCase().replace(/[^a-z]/g, '');
-    return name === 'done' || 
-           name === 'completed' || 
-           name === 'finished' ||
-           name === 'closed';
+    const name = column.name.toLowerCase().replace(/[^a-z]/g, "");
+    return (
+      name === "done" ||
+      name === "completed" ||
+      name === "finished" ||
+      name === "closed"
+    );
   };
 
   // ✅ Create board
@@ -245,6 +265,77 @@ const Dashboard = () => {
       setShowModal(false);
     } catch {
       showToast("Failed to create board!", "danger");
+    }
+  };
+
+  // ✅ NEW: Edit Board
+  const handleEditBoard = (board, e) => {
+    e.stopPropagation();
+    setEditingBoard(board);
+    setBoardName(board.name);
+    setBoardDescription(board.description || "");
+    setShowEditBoardModal(true);
+  };
+
+  // ✅ NEW: Update Board
+  const handleUpdateBoard = async () => {
+    if (!boardName.trim() || !editingBoard) return;
+
+    try {
+      const res = await api.put(`/boards/${editingBoard._id}`, {
+        name: boardName,
+        description: boardDescription,
+      });
+
+      setBoards(boards.map((b) => (b._id === editingBoard._id ? res.data : b)));
+
+      if (selectedBoard?._id === editingBoard._id) {
+        setSelectedBoard(res.data);
+      }
+
+      showToast("Board updated successfully!", "success");
+      setBoardName("");
+      setBoardDescription("");
+      setEditingBoard(null);
+      setShowEditBoardModal(false);
+    } catch (error) {
+      showToast(
+        error.response?.data?.message || "Failed to update board!",
+        "danger"
+      );
+    }
+  };
+
+  // ✅ NEW: Delete Board Confirmation
+  const handleDeleteBoardClick = (board, e) => {
+    e.stopPropagation();
+    setBoardToDelete(board);
+    setShowDeleteBoardDialog(true);
+  };
+
+  // ✅ NEW: Delete Board
+  const handleDeleteBoard = async () => {
+    if (!boardToDelete) return;
+
+    try {
+      await api.delete(`/boards/${boardToDelete._id}`);
+
+      setBoards(boards.filter((b) => b._id !== boardToDelete._id));
+
+      if (selectedBoard?._id === boardToDelete._id) {
+        setSelectedBoard(null);
+        setColumns([]);
+        setTasks([]);
+      }
+
+      showToast("Board deleted successfully!", "success");
+      setBoardToDelete(null);
+      setShowDeleteBoardDialog(false);
+    } catch (error) {
+      showToast(
+        error.response?.data?.message || "Failed to delete board!",
+        "danger"
+      );
     }
   };
 
@@ -270,6 +361,67 @@ const Dashboard = () => {
     } catch (err) {
       console.error("Column creation error:", err);
       showToast("Failed to create column!", "danger");
+    }
+  };
+
+  // ✅ NEW: Edit Column
+  const handleEditColumn = (column, e) => {
+    e.stopPropagation();
+    setEditingColumn(column);
+    setColumnName(column.name);
+    setShowEditColumnModal(true);
+  };
+
+  // ✅ NEW: Update Column
+  const handleUpdateColumn = async () => {
+    if (!columnName.trim() || !editingColumn) return;
+
+    try {
+      const res = await api.put(`/columns/${editingColumn._id}`, {
+        name: columnName,
+      });
+
+      setColumns(
+        columns.map((c) => (c._id === editingColumn._id ? res.data : c))
+      );
+
+      showToast("Column updated successfully!", "success");
+      setColumnName("");
+      setEditingColumn(null);
+      setShowEditColumnModal(false);
+    } catch (error) {
+      showToast(
+        error.response?.data?.message || "Failed to update column!",
+        "danger"
+      );
+    }
+  };
+
+  // ✅ NEW: Delete Column Confirmation
+  const handleDeleteColumnClick = (column, e) => {
+    e.stopPropagation();
+    setColumnToDelete(column);
+    setShowDeleteColumnDialog(true);
+  };
+
+  // ✅ NEW: Delete Column
+  const handleDeleteColumn = async () => {
+    if (!columnToDelete) return;
+
+    try {
+      await api.delete(`/columns/${columnToDelete._id}`);
+
+      setColumns(columns.filter((c) => c._id !== columnToDelete._id));
+      setTasks(tasks.filter((t) => t.columnId !== columnToDelete._id));
+
+      showToast("Column deleted successfully!", "success");
+      setColumnToDelete(null);
+      setShowDeleteColumnDialog(false);
+    } catch (error) {
+      showToast(
+        error.response?.data?.message || "Failed to delete column!",
+        "danger"
+      );
     }
   };
 
@@ -334,7 +486,6 @@ const Dashboard = () => {
     }
   };
 
-  // ✅ FIX 1: START TIMER - Auto move to "In Progress" with proper data handling
   const handleStartTimer = async (taskId) => {
     try {
       const res = await api.post(`/tasks/${taskId}/start-timer`);
@@ -352,42 +503,38 @@ const Dashboard = () => {
         }));
       }
 
-      // ✅ Smart auto-move to "In Progress" column
       const inProgressCol = getInProgressColumn();
-      
+
       if (inProgressCol && updatedTask.columnId !== inProgressCol._id) {
         try {
           const moveRes = await api.put(`/tasks/${taskId}`, {
-            columnId: inProgressCol._id
+            columnId: inProgressCol._id,
           });
 
-          // ✅ FIX: Use the response from move API which has complete task data
           const movedTask = moveRes.data;
           console.log("✅ Task moved, received complete data:", movedTask);
 
-          setTasks((prev) =>
-            prev.map((t) =>
-              t._id === taskId ? movedTask : t
-            )
-          );
+          setTasks((prev) => prev.map((t) => (t._id === taskId ? movedTask : t)));
 
-          showToast(`Timer started! Task moved to "${inProgressCol.name}"`, "success");
+          showToast(
+            `Timer started! Task moved to "${inProgressCol.name}"`,
+            "success"
+          );
         } catch (err) {
           console.error("Failed to move task:", err);
-          // ✅ Even if move fails, update with timer data
           setTasks((prev) =>
             prev.map((t) => (t._id === taskId ? updatedTask : t))
           );
           showToast("Timer started!", "success");
         }
       } else {
-        // ✅ No move needed, just update timer
-        setTasks((prev) =>
-          prev.map((t) => (t._id === taskId ? updatedTask : t))
-        );
-        
+        setTasks((prev) => prev.map((t) => (t._id === taskId ? updatedTask : t)));
+
         if (!inProgressCol) {
-          showToast('Timer started! (Tip: Create "In Progress" column for auto-move)', "info");
+          showToast(
+            'Timer started! (Tip: Create "In Progress" column for auto-move)',
+            "info"
+          );
         } else {
           showToast("Timer started!", "success");
         }
@@ -412,9 +559,7 @@ const Dashboard = () => {
         return updated;
       });
 
-      setTasks((prev) =>
-        prev.map((t) => (t._id === taskId ? task : t))
-      );
+      setTasks((prev) => prev.map((t) => (t._id === taskId ? task : t)));
 
       showToast("Timer stopped!", "success");
     } catch (error) {
@@ -473,7 +618,6 @@ const Dashboard = () => {
     return new Date(dueDate) < new Date();
   };
 
-  // ✅ FIX 2: DRAG & DROP - Stop timer when moved to Done column
   const handleDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
 
@@ -493,17 +637,14 @@ const Dashboard = () => {
       try {
         const destColumn = columns.find((col) => col._id === destColumnId);
         const isCompletionColumn = isDoneColumn(destColumn);
-        
-        // ✅ Find the task being dragged
-        const draggedTask = tasks.find(t => t._id === draggableId);
 
-        // ✅ FIX: If moving to Done and timer is running, stop it first
+        const draggedTask = tasks.find((t) => t._id === draggableId);
+
         if (isCompletionColumn && draggedTask?.timer?.isRunning) {
           console.log("⏸️ Stopping timer before marking complete...");
           try {
             await api.post(`/tasks/${draggableId}/stop-timer`);
-            
-            // ✅ Remove from running timers
+
             setRunningTimers((prev) => {
               const updated = { ...prev };
               delete updated[draggableId];
@@ -514,7 +655,6 @@ const Dashboard = () => {
           }
         }
 
-        // ✅ Optimistic update
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
             task._id === draggableId
@@ -540,12 +680,9 @@ const Dashboard = () => {
         }
 
         const res = await api.put(`/tasks/${draggableId}`, updateData);
-        
-        // ✅ Update with server response to ensure consistency
+
         setTasks((prevTasks) =>
-          prevTasks.map((task) =>
-            task._id === draggableId ? res.data : task
-          )
+          prevTasks.map((task) => (task._id === draggableId ? res.data : task))
         );
 
         showToast(
@@ -556,12 +693,9 @@ const Dashboard = () => {
         );
       } catch (error) {
         console.error("Drag error:", error);
-        // ✅ Rollback on error
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
-            task._id === draggableId
-              ? { ...task, columnId: sourceColumnId }
-              : task
+            task._id === draggableId ? { ...task, columnId: sourceColumnId } : task
           )
         );
 
@@ -573,7 +707,6 @@ const Dashboard = () => {
     }
   };
 
-  // ✅ Role-based permissions
   const isAdminOrManager = userRole === "Admin" || userRole === "Manager";
 
   const canSeeAssignedTo = (task) => {
@@ -588,7 +721,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container-fluid" style={{backgroundColor:'white'}}>
+    <div className="container-fluid" style={{ backgroundColor: "white" }}>
       <div className="row" style={{ height: "calc(100vh - 56px)" }}>
         {/* Sidebar */}
         <div className="col-3 bg-light border-end p-3">
@@ -619,13 +752,51 @@ const Dashboard = () => {
             {boards.map((board) => (
               <li
                 key={board._id}
-                className={`list-group-item ${
+                className={`list-group-item d-flex justify-content-between align-items-center ${
                   selectedBoard?._id === board._id ? "active" : ""
                 }`}
                 onClick={() => setSelectedBoard(board)}
                 style={{ cursor: "pointer" }}
               >
-                {board.name}
+                <span>{board.name}</span>
+
+                {/* ✅ Three Dots Menu for Board */}
+                {isAdminOrManager && (
+                  <div className="dropdown" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      className="btn btn-sm btn-link text-secondary p-0"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+                      </svg>
+                    </button>
+                    <ul className="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          onClick={(e) => handleEditBoard(board, e)}
+                        >
+                          ✏️ Edit
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item text-danger"
+                          onClick={(e) => handleDeleteBoardClick(board, e)}
+                        >
+                          🗑️ Delete
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </li>
             ))}
           </ul>
@@ -645,16 +816,16 @@ const Dashboard = () => {
           {!selectedBoard ? (
             <div className="text-center mt-5">
               <h4 className="text-muted">📋 Select a board to view tasks</h4>
-              <p className="text-secondary">Choose a board from the sidebar to get started</p>
+              <p className="text-secondary">
+                Choose a board from the sidebar to get started
+              </p>
             </div>
           ) : (
             <>
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <div>
                   <h4 className="mb-1">{selectedBoard.name}</h4>
-                  <p className="text-muted mb-0">
-                    {selectedBoard.description}
-                  </p>
+                  <p className="text-muted mb-0">{selectedBoard.description}</p>
                 </div>
                 {isAdminOrManager && (
                   <button
@@ -666,11 +837,18 @@ const Dashboard = () => {
                 )}
               </div>
 
-              {/* ✅ Helpful tips */}
               {columns.length > 0 && !getInProgressColumn() && (
-                <div className="alert alert-warning alert-dismissible fade show" role="alert">
-                  💡 <strong>Tip:</strong> Create a column named "In Progress" for automatic task movement when timer starts!
-                  <button type="button" className="btn-close" data-bs-dismiss="alert"></button>
+                <div
+                  className="alert alert-warning alert-dismissible fade show"
+                  role="alert"
+                >
+                  💡 <strong>Tip:</strong> Create a column named "In Progress"
+                  for automatic task movement when timer starts!
+                  <button
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="alert"
+                  ></button>
                 </div>
               )}
 
@@ -680,21 +858,66 @@ const Dashboard = () => {
                     <div className="col-12 text-center mt-5">
                       <h5 className="text-muted">No columns yet!</h5>
                       <p className="text-secondary">
-                        {isAdminOrManager 
+                        {isAdminOrManager
                           ? 'Click "Add Column" to create your workflow (e.g., Todo, In Progress, Done)'
-                          : 'Ask your admin/manager to create columns'
-                        }
+                          : "Ask your admin/manager to create columns"}
                       </p>
                     </div>
                   ) : (
                     columns.map((col) => (
                       <div className="col-4" key={col._id}>
                         <div className="card">
-                          <div className="card-header fw-bold text-center d-flex justify-content-between align-items-center">
+                          <div className="card-header fw-bold d-flex justify-content-between align-items-center">
                             <span>{col.name}</span>
-                            <span className="badge bg-secondary">
-                              {getTasksByColumn(col._id).length}
-                            </span>
+
+                            <div className="d-flex align-items-center gap-2">
+                              <span className="badge bg-secondary">
+                                {getTasksByColumn(col._id).length}
+                              </span>
+
+                              {/* ✅ Three Dots Menu for Column */}
+                              {isAdminOrManager && (
+                                <div
+                                  className="dropdown"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <button
+                                    className="btn btn-sm btn-link text-secondary p-0"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                  >
+                                    <svg
+                                      width="16"
+                                      height="16"
+                                      fill="currentColor"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+                                    </svg>
+                                  </button>
+                                  <ul className="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                      <button
+                                        className="dropdown-item"
+                                        onClick={(e) => handleEditColumn(col, e)}
+                                      >
+                                        ✏️ Edit
+                                      </button>
+                                    </li>
+                                    <li>
+                                      <button
+                                        className="dropdown-item text-danger"
+                                        onClick={(e) =>
+                                          handleDeleteColumnClick(col, e)
+                                        }
+                                      >
+                                        🗑️ Delete
+                                      </button>
+                                    </li>
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
                           </div>
 
                           <Droppable droppableId={col._id}>
@@ -729,68 +952,64 @@ const Dashboard = () => {
                                 {taskLoading ? (
                                   <p className="text-center">Loading...</p>
                                 ) : getTasksByColumn(col._id).length === 0 ? (
-                                  <p className="text-muted text-center">
-                                    No Tasks
-                                  </p>
+                                  <p className="text-muted text-center">No Tasks</p>
                                 ) : (
-                                  getTasksByColumn(col._id).map(
-                                    (task, index) => (
-                                      <Draggable
-                                        key={task._id}
-                                        draggableId={task._id}
-                                        index={index}
-                                      >
-                                        {(provided, snapshot) => (
-                                          <div
-                                            className="card mb-2 shadow-sm"
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                            style={{
-                                              ...provided.draggableProps.style,
-                                              opacity: snapshot.isDragging
-                                                ? 0.7
-                                                : 1,
-                                              cursor: "grab",
-                                              backgroundColor: task.isCompleted
-                                                ? "#f0f9ff"
-                                                : "white",
-                                              borderLeft: task.isCompleted
-                                                ? "4px solid #22c55e"
-                                                : task.timer?.isRunning && !task.isCompleted
-                                                ? "4px solid #3b82f6"
-                                                : "none",
-                                            }}
-                                          >
-                                            <div className="card-body p-2">
-                                              <div className="d-flex justify-content-between align-items-start mb-2">
-                                                <h6 className="mb-0 flex-grow-1">
-                                                  {task.isCompleted ? (
-                                                    <s>{task.title}</s>
-                                                  ) : (
-                                                    task.title
-                                                  )}
-                                                </h6>
-                                                <span
-                                                  className={`badge bg-${getPriorityColor(
-                                                    task.priority
-                                                  )} ms-2`}
-                                                  style={{ fontSize: "0.7rem" }}
-                                                >
-                                                  {task.priority}
+                                  getTasksByColumn(col._id).map((task, index) => (
+                                    <Draggable
+                                      key={task._id}
+                                      draggableId={task._id}
+                                      index={index}
+                                    >
+                                      {(provided, snapshot) => (
+                                        <div
+                                          className="card mb-2 shadow-sm"
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                          {...provided.dragHandleProps}
+                                          style={{
+                                            ...provided.draggableProps.style,
+                                            opacity: snapshot.isDragging ? 0.7 : 1,
+                                            cursor: "grab",
+                                            backgroundColor: task.isCompleted
+                                              ? "#f0f9ff"
+                                              : "white",
+                                            borderLeft: task.isCompleted
+                                              ? "4px solid #22c55e"
+                                              : task.timer?.isRunning &&
+                                                !task.isCompleted
+                                              ? "4px solid #3b82f6"
+                                              : "none",
+                                          }}
+                                        >
+                                          <div className="card-body p-2">
+                                            <div className="d-flex justify-content-between align-items-start mb-2">
+                                              <h6 className="mb-0 flex-grow-1">
+                                                {task.isCompleted ? (
+                                                  <s>{task.title}</s>
+                                                ) : (
+                                                  task.title
+                                                )}
+                                              </h6>
+                                              <span
+                                                className={`badge bg-${getPriorityColor(
+                                                  task.priority
+                                                )} ms-2`}
+                                                style={{ fontSize: "0.7rem" }}
+                                              >
+                                                {task.priority}
+                                              </span>
+                                            </div>
+
+                                            {task.isCompleted && (
+                                              <div className="mb-2">
+                                                <span className="badge bg-success">
+                                                  ✓ Completed
                                                 </span>
                                               </div>
+                                            )}
 
-                                              {task.isCompleted && (
-                                                <div className="mb-2">
-                                                  <span className="badge bg-success">
-                                                    ✓ Completed
-                                                  </span>
-                                                </div>
-                                              )}
-
-                                              {/* ✅ FIX: Only show "Timer Running" badge if NOT completed */}
-                                              {task.timer?.isRunning && !task.isCompleted && (
+                                            {task.timer?.isRunning &&
+                                              !task.isCompleted && (
                                                 <div className="mb-2">
                                                   <span className="badge bg-primary">
                                                     🔵 Timer Running
@@ -798,177 +1017,164 @@ const Dashboard = () => {
                                                 </div>
                                               )}
 
-                                              {task.description && (
-                                                <p
-                                                  className="text-muted mb-2"
-                                                  style={{ fontSize: "0.85rem" }}
+                                            {task.description && (
+                                              <p
+                                                className="text-muted mb-2"
+                                                style={{ fontSize: "0.85rem" }}
+                                              >
+                                                {task.description}
+                                              </p>
+                                            )}
+
+                                            {task.dueDate && (
+                                              <div className="mb-2">
+                                                <small
+                                                  className={`${
+                                                    isOverdue(task.dueDate)
+                                                      ? "text-danger fw-bold"
+                                                      : "text-secondary"
+                                                  }`}
                                                 >
-                                                  {task.description}
-                                                </p>
-                                              )}
-
-                                              {task.dueDate && (
-                                                <div className="mb-2">
-                                                  <small
-                                                    className={`${
-                                                      isOverdue(task.dueDate)
-                                                        ? "text-danger fw-bold"
-                                                        : "text-secondary"
-                                                    }`}
-                                                  >
-                                                    📅 Due:{" "}
-                                                    {new Date(
-                                                      task.dueDate
-                                                    ).toLocaleDateString()}
-                                                    {isOverdue(task.dueDate) &&
-                                                      " (Overdue)"}
-                                                  </small>
-                                                </div>
-                                              )}
-
-                                              {canSeeAssignedTo(task) &&
-                                                task.assignedTo && (
-                                                  <div className="mb-2">
-                                                    <small className="text-secondary">
-                                                      👤 Assigned to:{" "}
-                                                      <strong>
-                                                        {task.assignedTo.name ||
-                                                          task.assignedTo.email}
-                                                      </strong>
-                                                    </small>
-                                                  </div>
-                                                )}
-
-                                              {task.createdBy && (
-                                                <div className="mb-2">
-                                                  <small className="text-muted">
-                                                    📝 Assigned by:{" "}
-                                                    {task.createdBy.name ||
-                                                      task.createdBy.email ||
-                                                      "Unknown"}
-                                                    {task.createdBy.role &&
-                                                      ` (${task.createdBy.role})`}
-                                                  </small>
-                                                </div>
-                                              )}
-
-                                              {/* ✅ Timer Display */}
-                                              <div className="mb-2 p-2 bg-light rounded">
-                                                {task.isCompleted ? (
-                                                  <div className="text-center">
-                                                    <small className="text-success fw-bold">
-                                                      ⏱️ Total:{" "}
-                                                      {formatTime(
-                                                        task.timer
-                                                          ?.totalSeconds || 0
-                                                      )}
-                                                    </small>
-                                                    {task.timer?.sessions
-                                                      ?.length > 0 && (
-                                                      <small className="text-muted d-block">
-                                                        Sessions:{" "}
-                                                        {
-                                                          task.timer.sessions
-                                                            .length
-                                                        }
-                                                      </small>
-                                                    )}
-                                                  </div>
-                                                ) : (
-                                                  <>
-                                                    <div className="d-flex justify-content-between align-items-center">
-                                                      <small className="text-secondary">
-                                                        ⏱️{" "}
-                                                        {runningTimers[task._id]
-                                                          ? formatTime(
-                                                              runningTimers[
-                                                                task._id
-                                                              ]
-                                                            )
-                                                          : formatTime(
-                                                              task.timer
-                                                                ?.totalSeconds ||
-                                                                0
-                                                            )}
-                                                      </small>
-
-                                                      {task.timer?.isRunning ? (
-                                                        <button
-                                                          className="btn btn-sm btn-danger"
-                                                          onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleStopTimer(
-                                                              task._id
-                                                            );
-                                                          }}
-                                                          style={{
-                                                            fontSize: "0.7rem",
-                                                          }}
-                                                        >
-                                                          ⏸️ Stop
-                                                        </button>
-                                                      ) : (
-                                                        <button
-                                                          className="btn btn-sm btn-success"
-                                                          onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleStartTimer(
-                                                              task._id
-                                                            );
-                                                          }}
-                                                          style={{
-                                                            fontSize: "0.7rem",
-                                                          }}
-                                                        >
-                                                          {task.timer
-                                                            ?.totalSeconds > 0
-                                                            ? "▶️ Resume"
-                                                            : "▶️ Start"}
-                                                        </button>
-                                                      )}
-                                                    </div>
-
-                                                    {task.timer?.sessions
-                                                      ?.length > 0 && (
-                                                      <small className="text-muted d-block mt-1">
-                                                        Sessions:{" "}
-                                                        {task.timer.sessions.length}
-                                                      </small>
-                                                    )}
-                                                  </>
-                                                )}
+                                                  📅 Due:{" "}
+                                                  {new Date(
+                                                    task.dueDate
+                                                  ).toLocaleDateString()}
+                                                  {isOverdue(task.dueDate) &&
+                                                    " (Overdue)"}
+                                                </small>
                                               </div>
+                                            )}
 
-                                              {isAdminOrManager && (
-                                                <div className="d-flex gap-1 mt-2">
-                                                  <button
-                                                    className="btn btn-sm btn-outline-secondary flex-grow-1"
-                                                    onClick={(e) => {
-                                                      e.stopPropagation();
-                                                      handleEditTask(task);
-                                                    }}
-                                                  >
-                                                    ✏️ Edit
-                                                  </button>
-                                                  <button
-                                                    className="btn btn-sm btn-outline-danger"
-                                                    onClick={(e) => {
-                                                      e.stopPropagation();
-                                                      handleDeleteTask(
-                                                        task._id
-                                                      );
-                                                    }}
-                                                  >
-                                                    🗑️
-                                                  </button>
+                                            {canSeeAssignedTo(task) &&
+                                              task.assignedTo && (
+                                                <div className="mb-2">
+                                                  <small className="text-secondary">
+                                                    👤 Assigned to:{" "}
+                                                    <strong>
+                                                      {task.assignedTo.name ||
+                                                        task.assignedTo.email}
+                                                    </strong>
+                                                  </small>
                                                 </div>
+                                              )}
+
+                                            {task.createdBy && (
+                                              <div className="mb-2">
+                                                <small className="text-muted">
+                                                  📝 Assigned by:{" "}
+                                                  {task.createdBy.name ||
+                                                    task.createdBy.email ||
+                                                    "Unknown"}
+                                                  {task.createdBy.role &&
+                                                    ` (${task.createdBy.role})`}
+                                                </small>
+                                              </div>
+                                            )}
+
+                                            <div className="mb-2 p-2 bg-light rounded">
+                                              {task.isCompleted ? (
+                                                <div className="text-center">
+                                                  <small className="text-success fw-bold">
+                                                    ⏱️ Total:{" "}
+                                                    {formatTime(
+                                                      task.timer?.totalSeconds || 0
+                                                    )}
+                                                  </small>
+                                                  {task.timer?.sessions?.length >
+                                                    0 && (
+                                                    <small className="text-muted d-block">
+                                                      Sessions:{" "}
+                                                      {task.timer.sessions.length}
+                                                    </small>
+                                                  )}
+                                                </div>
+                                              ) : (
+                                                <>
+                                                  <div className="d-flex justify-content-between align-items-center">
+                                                    <small className="text-secondary">
+                                                      ⏱️{" "}
+                                                      {runningTimers[task._id]
+                                                        ? formatTime(
+                                                            runningTimers[task._id]
+                                                          )
+                                                        : formatTime(
+                                                            task.timer
+                                                              ?.totalSeconds || 0
+                                                          )}
+                                                    </small>
+
+                                                    {task.timer?.isRunning ? (
+                                                      <button
+                                                        className="btn btn-sm btn-danger"
+                                                        onClick={(e) => {
+                                                          e.stopPropagation();
+                                                          handleStopTimer(task._id);
+                                                        }}
+                                                        style={{
+                                                          fontSize: "0.7rem",
+                                                        }}
+                                                      >
+                                                        ⏸️ Stop
+                                                      </button>
+                                                    ) : (
+                                                      <button
+                                                        className="btn btn-sm btn-success"
+                                                        onClick={(e) => {
+                                                          e.stopPropagation();
+                                                          handleStartTimer(
+                                                            task._id
+                                                          );
+                                                        }}
+                                                        style={{
+                                                          fontSize: "0.7rem",
+                                                        }}
+                                                      >
+                                                        {task.timer?.totalSeconds >
+                                                        0
+                                                          ? "▶️ Resume"
+                                                          : "▶️ Start"}
+                                                      </button>
+                                                    )}
+                                                  </div>
+
+                                                  {task.timer?.sessions?.length >
+                                                    0 && (
+                                                    <small className="text-muted d-block mt-1">
+                                                      Sessions:{" "}
+                                                      {task.timer.sessions.length}
+                                                    </small>
+                                                  )}
+                                                </>
                                               )}
                                             </div>
+
+                                            {isAdminOrManager && (
+                                              <div className="d-flex gap-1 mt-2">
+                                                <button
+                                                  className="btn btn-sm btn-outline-secondary flex-grow-1"
+                                                  onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleEditTask(task);
+                                                  }}
+                                                >
+                                                  ✏️ Edit
+                                                </button>
+                                                <button
+                                                  className="btn btn-sm btn-outline-danger"
+                                                  onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDeleteTask(task._id);
+                                                  }}
+                                                >
+                                                  🗑️
+                                                </button>
+                                              </div>
+                                            )}
                                           </div>
-                                        )}
-                                      </Draggable>
-                                    )
-                                  )
+                                        </div>
+                                      )}
+                                    </Draggable>
+                                  ))
                                 )}
                                 {provided.placeholder}
                               </div>
@@ -984,7 +1190,7 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* Board Create Modal */}
+        {/* Create Board Modal */}
         {showModal && (
           <div className="modal fade show d-block" tabIndex="-1">
             <div className="modal-dialog">
@@ -1020,11 +1226,106 @@ const Dashboard = () => {
                   >
                     Cancel
                   </button>
-                  <button
-                    className="btn btn-primary"
-                    onClick={handleCreateBoard}
-                  >
+                  <button className="btn btn-primary" onClick={handleCreateBoard}>
                     Create
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ✅ Edit Board Modal */}
+        {showEditBoardModal && (
+          <div className="modal fade show d-block" tabIndex="-1">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Edit Board</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => {
+                      setShowEditBoardModal(false);
+                      setBoardName("");
+                      setBoardDescription("");
+                      setEditingBoard(null);
+                    }}
+                  />
+                </div>
+                <div className="modal-body">
+                  <input
+                    type="text"
+                    className="form-control mb-3"
+                    placeholder="Board name"
+                    value={boardName}
+                    onChange={(e) => setBoardName(e.target.value)}
+                  />
+                  <textarea
+                    className="form-control"
+                    placeholder="Board description"
+                    rows="3"
+                    value={boardDescription}
+                    onChange={(e) => setBoardDescription(e.target.value)}
+                  ></textarea>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setShowEditBoardModal(false);
+                      setBoardName("");
+                      setBoardDescription("");
+                      setEditingBoard(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button className="btn btn-primary" onClick={handleUpdateBoard}>
+                    Update
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ✅ Delete Board Confirmation */}
+        {showDeleteBoardDialog && (
+          <div className="modal fade show d-block" tabIndex="-1">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title text-danger">Delete Board</h5>
+                  <button
+                    className="btn-close"
+                    onClick={() => {
+                      setShowDeleteBoardDialog(false);
+                      setBoardToDelete(null);
+                    }}
+                  />
+                </div>
+                <div className="modal-body">
+                  <p>
+                    Are you sure you want to delete{" "}
+                    <strong>{boardToDelete?.name}</strong>?
+                  </p>
+                  <div className="alert alert-warning">
+                    ⚠️ This will delete all columns and tasks in this board!
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setShowDeleteBoardDialog(false);
+                      setBoardToDelete(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button className="btn btn-danger" onClick={handleDeleteBoard}>
+                    Delete Board
                   </button>
                 </div>
               </div>
@@ -1057,7 +1358,9 @@ const Dashboard = () => {
                       <strong>💡 Tips:</strong>
                       <ul className="mb-0 mt-1">
                         <li>Create "In Progress" for automatic timer moves</li>
-                        <li>Create "Done" or "Completed" for task completion</li>
+                        <li>
+                          Create "Done" or "Completed" for task completion
+                        </li>
                         <li>Add as many columns as your workflow needs!</li>
                       </ul>
                     </small>
@@ -1075,6 +1378,94 @@ const Dashboard = () => {
                     onClick={handleCreateColumn}
                   >
                     Create Column
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ✅ Edit Column Modal */}
+        {showEditColumnModal && (
+          <div className="modal fade show d-block" tabIndex="-1">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Edit Column</h5>
+                  <button
+                    className="btn-close"
+                    onClick={() => {
+                      setShowEditColumnModal(false);
+                      setColumnName("");
+                      setEditingColumn(null);
+                    }}
+                  />
+                </div>
+                <div className="modal-body">
+                  <input
+                    type="text"
+                    className="form-control mb-3"
+                    placeholder="Column name"
+                    value={columnName}
+                    onChange={(e) => setColumnName(e.target.value)}
+                  />
+                </div>
+                <div className="modal-footer">
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setShowEditColumnModal(false);
+                      setColumnName("");
+                      setEditingColumn(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button className="btn btn-primary" onClick={handleUpdateColumn}>
+                    Update
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ✅ Delete Column Confirmation */}
+        {showDeleteColumnDialog && (
+          <div className="modal fade show d-block" tabIndex="-1">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title text-danger">Delete Column</h5>
+                  <button
+                    className="btn-close"
+                    onClick={() => {
+                      setShowDeleteColumnDialog(false);
+                      setColumnToDelete(null);
+                    }}
+                  />
+                </div>
+                <div className="modal-body">
+                  <p>
+                    Are you sure you want to delete{" "}
+                    <strong>{columnToDelete?.name}</strong>?
+                  </p>
+                  <div className="alert alert-warning">
+                    ⚠️ All tasks in this column will also be deleted!
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setShowDeleteColumnDialog(false);
+                      setColumnToDelete(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button className="btn btn-danger" onClick={handleDeleteColumn}>
+                    Delete Column
                   </button>
                 </div>
               </div>
@@ -1147,9 +1538,7 @@ const Dashboard = () => {
                       value={assignedTo}
                       onChange={(e) => setAssignedTo(e.target.value)}
                     />
-                    <small className="text-muted">
-                      Leave blank for unassigned
-                    </small>
+                    <small className="text-muted">Leave blank for unassigned</small>
                   </div>
                 </div>
                 <div className="modal-footer">
