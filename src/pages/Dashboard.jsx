@@ -51,6 +51,9 @@ const Dashboard = () => {
   const [showDeleteColumnDialog, setShowDeleteColumnDialog] = useState(false);
   const [columnToDelete, setColumnToDelete] = useState(null);
 
+  // ✅ NEW: Sidebar toggle for mobile
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -722,10 +725,29 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container-fluid" style={{ backgroundColor: "white" }}>
-      <div className="row" style={{ height: "calc(100vh - 56px)" }}>
-        {/* Sidebar */}
-        <div className="col-3 bg-light border-end p-3">
+    <div className="container-fluid" style={{ backgroundColor: "#f8f9fa", minHeight: "100vh" }}>
+      <div className="row" style={{ minHeight: "calc(100vh - 56px)" }}>
+        {/* ✅ Sidebar - Responsive with mobile toggle */}
+        <div 
+          className={`col-lg-3 col-md-4 bg-light border-end p-3 ${sidebarOpen ? 'd-block' : 'd-none d-md-block'}`}
+          style={{ 
+            position: sidebarOpen ? 'fixed' : 'relative',
+            top: sidebarOpen ? '0' : 'auto',
+            left: sidebarOpen ? '0' : 'auto',
+            height: sidebarOpen ? '100vh' : 'auto',
+            zIndex: sidebarOpen ? '1050' : 'auto',
+            width: sidebarOpen ? '80%' : 'auto',
+            overflowY: 'auto'
+          }}
+        >
+          {/* ✅ Close button for mobile */}
+          {sidebarOpen && (
+            <button 
+              className="btn btn-sm btn-close float-end d-md-none mb-2"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+          
           <h5 className="mb-3">Boards</h5>
 
           {userRole && (
@@ -756,12 +778,14 @@ const Dashboard = () => {
                 className={`list-group-item d-flex justify-content-between align-items-center ${
                   selectedBoard?._id === board._id ? "active" : ""
                 }`}
-                onClick={() => setSelectedBoard(board)}
+                onClick={() => {
+                  setSelectedBoard(board);
+                  setSidebarOpen(false); // Close sidebar on mobile after selection
+                }}
                 style={{ cursor: "pointer" }}
               >
                 <span>{board.name}</span>
 
-                {/* ✅ Three Dots Menu for Board */}
                 {isAdminOrManager && (
                   <div className="dropdown" onClick={(e) => e.stopPropagation()}>
                     <button
@@ -812,8 +836,16 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* Main Content */}
-        <div className="col-9 p-4">
+        {/* ✅ Main Content - Responsive */}
+        <div className="col-lg-9 col-md-8 col-12 p-3 p-md-4" style={{ backgroundColor: "white", minHeight: "100%" }}>
+          {/* ✅ Mobile Menu Toggle */}
+          <button 
+            className="btn btn-primary d-md-none mb-3"
+            onClick={() => setSidebarOpen(true)}
+          >
+            ☰ Boards
+          </button>
+
           {!selectedBoard ? (
             <div className="text-center mt-5">
               <h4 className="text-muted">📋 Select a board to view tasks</h4>
@@ -823,7 +855,7 @@ const Dashboard = () => {
             </div>
           ) : (
             <>
-              <div className="d-flex justify-content-between align-items-center mb-3">
+              <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 gap-2">
                 <div>
                   <h4 className="mb-1">{selectedBoard.name}</h4>
                   <p className="text-muted mb-0">{selectedBoard.description}</p>
@@ -854,9 +886,17 @@ const Dashboard = () => {
               )}
 
               <DragDropContext onDragEnd={handleDragEnd}>
-                <div className="row mt-3">
+                {/* ✅ Responsive columns container with horizontal scroll */}
+                <div 
+                  className="mt-3" 
+                  style={{ 
+                    overflowX: "auto",
+                    overflowY: "visible",
+                    paddingBottom: "20px"
+                  }}
+                >
                   {columns.length === 0 ? (
-                    <div className="col-12 text-center mt-5">
+                    <div className="text-center mt-5">
                       <h5 className="text-muted">No columns yet!</h5>
                       <p className="text-secondary">
                         {isAdminOrManager
@@ -865,325 +905,340 @@ const Dashboard = () => {
                       </p>
                     </div>
                   ) : (
-                    columns.map((col) => (
-                      <div className="col-4" key={col._id}>
-                        <div className="card">
-                          <div className="card-header fw-bold d-flex justify-content-between align-items-center">
-                            <span>{col.name}</span>
+                    <div 
+                      className="d-flex gap-3"
+                      style={{ 
+                        minWidth: "fit-content"
+                      }}
+                    >
+                      {columns.map((col) => (
+                        <div 
+                          key={col._id}
+                          style={{ 
+                            minWidth: "320px",
+                            maxWidth: "400px",
+                            flex: "1 1 320px"
+                          }}
+                        >
+                          <div className="card h-100">
+                            <div className="card-header fw-bold d-flex justify-content-between align-items-center">
+                              <span>{col.name}</span>
 
-                            <div className="d-flex align-items-center gap-2">
-                              <span className="badge bg-secondary">
-                                {getTasksByColumn(col._id).length}
-                              </span>
+                              <div className="d-flex align-items-center gap-2">
+                                <span className="badge bg-secondary">
+                                  {getTasksByColumn(col._id).length}
+                                </span>
 
-                              {/* ✅ Three Dots Menu for Column */}
-                              {isAdminOrManager && (
-                                <div
-                                  className="dropdown"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <button
-                                    className="btn btn-sm btn-link text-secondary p-0"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                  >
-                                    <svg
-                                      width="16"
-                                      height="16"
-                                      fill="currentColor"
-                                      viewBox="0 0 16 16"
-                                    >
-                                      <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-                                    </svg>
-                                  </button>
-                                  <ul className="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                      <button
-                                        className="dropdown-item"
-                                        onClick={(e) => handleEditColumn(col, e)}
-                                      >
-                                        ✏️ Edit
-                                      </button>
-                                    </li>
-                                    <li>
-                                      <button
-                                        className="dropdown-item text-danger"
-                                        onClick={(e) =>
-                                          handleDeleteColumnClick(col, e)
-                                        }
-                                      >
-                                        🗑️ Delete
-                                      </button>
-                                    </li>
-                                  </ul>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          <Droppable droppableId={col._id}>
-                            {(provided, snapshot) => (
-                              <div
-                                className="card-body"
-                                style={{
-                                  minHeight: "400px",
-                                  backgroundColor: snapshot.isDraggingOver
-                                    ? "#e3f2fd"
-                                    : "white",
-                                  transition: "background-color 0.2s",
-                                }}
-                                ref={provided.innerRef}
-                                {...provided.droppableProps}
-                              >
                                 {isAdminOrManager && (
-                                  <button
-                                    className="btn btn-sm btn-outline-primary w-100 mb-3"
-                                    onClick={() => {
-                                      setActiveColumnId(col._id);
-                                      setEditingTask(null);
-                                      resetTaskForm();
-                                      setActiveColumnId(col._id);
-                                      setShowTaskModel(true);
-                                    }}
+                                  <div
+                                    className="dropdown"
+                                    onClick={(e) => e.stopPropagation()}
                                   >
-                                    + Add Task
-                                  </button>
-                                )}
-
-                                {taskLoading ? (
-                                  <p className="text-center">Loading...</p>
-                                ) : getTasksByColumn(col._id).length === 0 ? (
-                                  <p className="text-muted text-center">No Tasks</p>
-                                ) : (
-                                  getTasksByColumn(col._id).map((task, index) => (
-                                    <Draggable
-                                      key={task._id}
-                                      draggableId={task._id}
-                                      index={index}
+                                    <button
+                                      className="btn btn-sm btn-link text-secondary p-0"
+                                      data-bs-toggle="dropdown"
+                                      aria-expanded="false"
                                     >
-                                      {(provided, snapshot) => (
-                                        <div
-                                          className="card mb-2 shadow-sm"
-                                          ref={provided.innerRef}
-                                          {...provided.draggableProps}
-                                          {...provided.dragHandleProps}
-                                          style={{
-                                            ...provided.draggableProps.style,
-                                            opacity: snapshot.isDragging ? 0.7 : 1,
-                                            cursor: "grab",
-                                            backgroundColor: task.isCompleted
-                                              ? "#f0f9ff"
-                                              : "white",
-                                            borderLeft: task.isCompleted
-                                              ? "4px solid #22c55e"
-                                              : task.timer?.isRunning &&
-                                                !task.isCompleted
-                                              ? "4px solid #3b82f6"
-                                              : "none",
-                                          }}
+                                      <svg
+                                        width="16"
+                                        height="16"
+                                        fill="currentColor"
+                                        viewBox="0 0 16 16"
+                                      >
+                                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+                                      </svg>
+                                    </button>
+                                    <ul className="dropdown-menu dropdown-menu-end">
+                                      <li>
+                                        <button
+                                          className="dropdown-item"
+                                          onClick={(e) => handleEditColumn(col, e)}
                                         >
-                                          <div className="card-body p-2">
-                                            <div className="d-flex justify-content-between align-items-start mb-2">
-                                              <h6 className="mb-0 flex-grow-1">
-                                                {task.isCompleted ? (
-                                                  <s>{task.title}</s>
-                                                ) : (
-                                                  task.title
-                                                )}
-                                              </h6>
-                                              <span
-                                                className={`badge bg-${getPriorityColor(
-                                                  task.priority
-                                                )} ms-2`}
-                                                style={{ fontSize: "0.7rem" }}
-                                              >
-                                                {task.priority}
-                                              </span>
-                                            </div>
+                                          ✏️ Edit
+                                        </button>
+                                      </li>
+                                      <li>
+                                        <button
+                                          className="dropdown-item text-danger"
+                                          onClick={(e) =>
+                                            handleDeleteColumnClick(col, e)
+                                          }
+                                        >
+                                          🗑️ Delete
+                                        </button>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
 
-                                            {task.isCompleted && (
-                                              <div className="mb-2">
-                                                <span className="badge bg-success">
-                                                  ✓ Completed
+                            <Droppable droppableId={col._id}>
+                              {(provided, snapshot) => (
+                                <div
+                                  className="card-body"
+                                  style={{
+                                    minHeight: "400px",
+                                    maxHeight: "70vh",
+                                    overflowY: "auto",
+                                    backgroundColor: snapshot.isDraggingOver
+                                      ? "#e3f2fd"
+                                      : "white",
+                                    transition: "background-color 0.2s",
+                                  }}
+                                  ref={provided.innerRef}
+                                  {...provided.droppableProps}
+                                >
+                                  {isAdminOrManager && (
+                                    <button
+                                      className="btn btn-sm btn-outline-primary w-100 mb-3"
+                                      onClick={() => {
+                                        setActiveColumnId(col._id);
+                                        setEditingTask(null);
+                                        resetTaskForm();
+                                        setActiveColumnId(col._id);
+                                        setShowTaskModel(true);
+                                      }}
+                                    >
+                                      + Add Task
+                                    </button>
+                                  )}
+
+                                  {taskLoading ? (
+                                    <p className="text-center">Loading...</p>
+                                  ) : getTasksByColumn(col._id).length === 0 ? (
+                                    <p className="text-muted text-center">No Tasks</p>
+                                  ) : (
+                                    getTasksByColumn(col._id).map((task, index) => (
+                                      <Draggable
+                                        key={task._id}
+                                        draggableId={task._id}
+                                        index={index}
+                                      >
+                                        {(provided, snapshot) => (
+                                          <div
+                                            className="card mb-2 shadow-sm"
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            style={{
+                                              ...provided.draggableProps.style,
+                                              opacity: snapshot.isDragging ? 0.7 : 1,
+                                              cursor: "grab",
+                                              backgroundColor: task.isCompleted
+                                                ? "#f0f9ff"
+                                                : "white",
+                                              borderLeft: task.isCompleted
+                                                ? "4px solid #22c55e"
+                                                : task.timer?.isRunning &&
+                                                  !task.isCompleted
+                                                ? "4px solid #3b82f6"
+                                                : "none",
+                                            }}
+                                          >
+                                            <div className="card-body p-2">
+                                              <div className="d-flex justify-content-between align-items-start mb-2">
+                                                <h6 className="mb-0 flex-grow-1">
+                                                  {task.isCompleted ? (
+                                                    <s>{task.title}</s>
+                                                  ) : (
+                                                    task.title
+                                                  )}
+                                                </h6>
+                                                <span
+                                                  className={`badge bg-${getPriorityColor(
+                                                    task.priority
+                                                  )} ms-2`}
+                                                  style={{ fontSize: "0.7rem" }}
+                                                >
+                                                  {task.priority}
                                                 </span>
                                               </div>
-                                            )}
 
-                                            {task.timer?.isRunning &&
-                                              !task.isCompleted && (
+                                              {task.isCompleted && (
                                                 <div className="mb-2">
-                                                  <span className="badge bg-primary">
-                                                    🔵 Timer Running
+                                                  <span className="badge bg-success">
+                                                    ✓ Completed
                                                   </span>
                                                 </div>
                                               )}
 
-                                            {task.description && (
-                                              <p
-                                                className="text-muted mb-2"
-                                                style={{ fontSize: "0.85rem" }}
-                                              >
-                                                {task.description}
-                                              </p>
-                                            )}
+                                              {task.timer?.isRunning &&
+                                                !task.isCompleted && (
+                                                  <div className="mb-2">
+                                                    <span className="badge bg-primary">
+                                                      🔵 Timer Running
+                                                    </span>
+                                                  </div>
+                                                )}
 
-                                            {task.dueDate && (
-                                              <div className="mb-2">
-                                                <small
-                                                  className={`${
-                                                    isOverdue(task.dueDate)
-                                                      ? "text-danger fw-bold"
-                                                      : "text-secondary"
-                                                  }`}
+                                              {task.description && (
+                                                <p
+                                                  className="text-muted mb-2"
+                                                  style={{ fontSize: "0.85rem" }}
                                                 >
-                                                  📅 Due:{" "}
-                                                  {new Date(
-                                                    task.dueDate
-                                                  ).toLocaleDateString()}
-                                                  {isOverdue(task.dueDate) &&
-                                                    " (Overdue)"}
-                                                </small>
-                                              </div>
-                                            )}
+                                                  {task.description}
+                                                </p>
+                                              )}
 
-                                            {canSeeAssignedTo(task) &&
-                                              task.assignedTo && (
+                                              {task.dueDate && (
                                                 <div className="mb-2">
-                                                  <small className="text-secondary">
-                                                    👤 Assigned to:{" "}
-                                                    <strong>
-                                                      {task.assignedTo.name ||
-                                                        task.assignedTo.email}
-                                                    </strong>
+                                                  <small
+                                                    className={`${
+                                                      isOverdue(task.dueDate)
+                                                        ? "text-danger fw-bold"
+                                                        : "text-secondary"
+                                                    }`}
+                                                  >
+                                                    📅 Due:{" "}
+                                                    {new Date(
+                                                      task.dueDate
+                                                    ).toLocaleDateString()}
+                                                    {isOverdue(task.dueDate) &&
+                                                      " (Overdue)"}
                                                   </small>
                                                 </div>
                                               )}
 
-                                            {task.createdBy && (
-                                              <div className="mb-2">
-                                                <small className="text-muted">
-                                                  📝 Assigned by:{" "}
-                                                  {task.createdBy.name ||
-                                                    task.createdBy.email ||
-                                                    "Unknown"}
-                                                  {task.createdBy.role &&
-                                                    ` (${task.createdBy.role})`}
-                                                </small>
-                                              </div>
-                                            )}
-
-                                            <div className="mb-2 p-2 bg-light rounded">
-                                              {task.isCompleted ? (
-                                                <div className="text-center">
-                                                  <small className="text-success fw-bold">
-                                                    ⏱️ Total:{" "}
-                                                    {formatTime(
-                                                      task.timer?.totalSeconds || 0
-                                                    )}
-                                                  </small>
-                                                  {task.timer?.sessions?.length >
-                                                    0 && (
-                                                    <small className="text-muted d-block">
-                                                      Sessions:{" "}
-                                                      {task.timer.sessions.length}
-                                                    </small>
-                                                  )}
-                                                </div>
-                                              ) : (
-                                                <>
-                                                  <div className="d-flex justify-content-between align-items-center">
+                                              {canSeeAssignedTo(task) &&
+                                                task.assignedTo && (
+                                                  <div className="mb-2">
                                                     <small className="text-secondary">
-                                                      ⏱️{" "}
-                                                      {runningTimers[task._id]
-                                                        ? formatTime(
-                                                            runningTimers[task._id]
-                                                          )
-                                                        : formatTime(
-                                                            task.timer
-                                                              ?.totalSeconds || 0
-                                                          )}
+                                                      👤 Assigned to:{" "}
+                                                      <strong>
+                                                        {task.assignedTo.name ||
+                                                          task.assignedTo.email}
+                                                      </strong>
                                                     </small>
+                                                  </div>
+                                                )}
 
-                                                    {task.timer?.isRunning ? (
-                                                      <button
-                                                        className="btn btn-sm btn-danger"
-                                                        onClick={(e) => {
-                                                          e.stopPropagation();
-                                                          handleStopTimer(task._id);
-                                                        }}
-                                                        style={{
-                                                          fontSize: "0.7rem",
-                                                        }}
-                                                      >
-                                                        ⏸️ Stop
-                                                      </button>
-                                                    ) : (
-                                                      <button
-                                                        className="btn btn-sm btn-success"
-                                                        onClick={(e) => {
-                                                          e.stopPropagation();
-                                                          handleStartTimer(
-                                                            task._id
-                                                          );
-                                                        }}
-                                                        style={{
-                                                          fontSize: "0.7rem",
-                                                        }}
-                                                      >
-                                                        {task.timer?.totalSeconds >
-                                                        0
-                                                          ? "▶️ Resume"
-                                                          : "▶️ Start"}
-                                                      </button>
+                                              {task.createdBy && (
+                                                <div className="mb-2">
+                                                  <small className="text-muted">
+                                                    📝 Assigned by:{" "}
+                                                    {task.createdBy.name ||
+                                                      task.createdBy.email ||
+                                                      "Unknown"}
+                                                    {task.createdBy.role &&
+                                                      ` (${task.createdBy.role})`}
+                                                  </small>
+                                                </div>
+                                              )}
+
+                                              <div className="mb-2 p-2 bg-light rounded">
+                                                {task.isCompleted ? (
+                                                  <div className="text-center">
+                                                    <small className="text-success fw-bold">
+                                                      ⏱️ Total:{" "}
+                                                      {formatTime(
+                                                        task.timer?.totalSeconds || 0
+                                                      )}
+                                                    </small>
+                                                    {task.timer?.sessions?.length >
+                                                      0 && (
+                                                      <small className="text-muted d-block">
+                                                        Sessions:{" "}
+                                                        {task.timer.sessions.length}
+                                                      </small>
                                                     )}
                                                   </div>
+                                                ) : (
+                                                  <>
+                                                    <div className="d-flex justify-content-between align-items-center">
+                                                      <small className="text-secondary">
+                                                        ⏱️{" "}
+                                                        {runningTimers[task._id]
+                                                          ? formatTime(
+                                                              runningTimers[task._id]
+                                                            )
+                                                          : formatTime(
+                                                              task.timer
+                                                                ?.totalSeconds || 0
+                                                            )}
+                                                      </small>
 
-                                                  {task.timer?.sessions?.length >
-                                                    0 && (
-                                                    <small className="text-muted d-block mt-1">
-                                                      Sessions:{" "}
-                                                      {task.timer.sessions.length}
-                                                    </small>
-                                                  )}
-                                                </>
+                                                      {task.timer?.isRunning ? (
+                                                        <button
+                                                          className="btn btn-sm btn-danger"
+                                                          onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleStopTimer(task._id);
+                                                          }}
+                                                          style={{
+                                                            fontSize: "0.7rem",
+                                                          }}
+                                                        >
+                                                          ⏸️ Stop
+                                                        </button>
+                                                      ) : (
+                                                        <button
+                                                          className="btn btn-sm btn-success"
+                                                          onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleStartTimer(
+                                                              task._id
+                                                            );
+                                                          }}
+                                                          style={{
+                                                            fontSize: "0.7rem",
+                                                          }}
+                                                        >
+                                                          {task.timer?.totalSeconds >
+                                                          0
+                                                            ? "▶️ Resume"
+                                                            : "▶️ Start"}
+                                                        </button>
+                                                      )}
+                                                    </div>
+
+                                                    {task.timer?.sessions?.length >
+                                                      0 && (
+                                                      <small className="text-muted d-block mt-1">
+                                                        Sessions:{" "}
+                                                        {task.timer.sessions.length}
+                                                      </small>
+                                                    )}
+                                                  </>
+                                                )}
+                                              </div>
+
+                                              {isAdminOrManager && (
+                                                <div className="d-flex gap-1 mt-2">
+                                                  <button
+                                                    className="btn btn-sm btn-outline-secondary flex-grow-1"
+                                                    onClick={(e) => {
+                                                      e.stopPropagation();
+                                                      handleEditTask(task);
+                                                    }}
+                                                  >
+                                                    ✏️ Edit
+                                                  </button>
+                                                  <button
+                                                    className="btn btn-sm btn-outline-danger"
+                                                    onClick={(e) => {
+                                                      e.stopPropagation();
+                                                      handleDeleteTask(task._id);
+                                                    }}
+                                                  >
+                                                    🗑️
+                                                  </button>
+                                                </div>
                                               )}
                                             </div>
-
-                                            {isAdminOrManager && (
-                                              <div className="d-flex gap-1 mt-2">
-                                                <button
-                                                  className="btn btn-sm btn-outline-secondary flex-grow-1"
-                                                  onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleEditTask(task);
-                                                  }}
-                                                >
-                                                  ✏️ Edit
-                                                </button>
-                                                <button
-                                                  className="btn btn-sm btn-outline-danger"
-                                                  onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleDeleteTask(task._id);
-                                                  }}
-                                                >
-                                                  🗑️
-                                                </button>
-                                              </div>
-                                            )}
                                           </div>
-                                        </div>
-                                      )}
-                                    </Draggable>
-                                  ))
-                                )}
-                                {provided.placeholder}
-                              </div>
-                            )}
-                          </Droppable>
+                                        )}
+                                      </Draggable>
+                                    ))
+                                  )}
+                                  {provided.placeholder}
+                                </div>
+                              )}
+                            </Droppable>
+                          </div>
                         </div>
-                      </div>
-                    ))
+                      ))}
+                    </div>
                   )}
                 </div>
               </DragDropContext>
@@ -1191,9 +1246,10 @@ const Dashboard = () => {
           )}
         </div>
 
+        {/* All the modals remain the same... */}
         {/* Create Board Modal */}
         {showModal && (
-          <div className="modal fade show d-block" tabIndex="-1">
+          <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1236,9 +1292,9 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* ✅ Edit Board Modal */}
+        {/* Edit Board Modal */}
         {showEditBoardModal && (
-          <div className="modal fade show d-block" tabIndex="-1">
+          <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1291,9 +1347,9 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* ✅ Delete Board Confirmation */}
+        {/* Delete Board Confirmation */}
         {showDeleteBoardDialog && (
-          <div className="modal fade show d-block" tabIndex="-1">
+          <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1336,7 +1392,7 @@ const Dashboard = () => {
 
         {/* Create Column Modal */}
         {showColumnModal && (
-          <div className="modal fade show d-block" tabIndex="-1">
+          <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1386,9 +1442,9 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* ✅ Edit Column Modal */}
+        {/* Edit Column Modal */}
         {showEditColumnModal && (
-          <div className="modal fade show d-block" tabIndex="-1">
+          <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1431,9 +1487,9 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* ✅ Delete Column Confirmation */}
+        {/* Delete Column Confirmation */}
         {showDeleteColumnDialog && (
-          <div className="modal fade show d-block" tabIndex="-1">
+          <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1476,7 +1532,7 @@ const Dashboard = () => {
 
         {/* Create/Edit Task Modal */}
         {showTaskModel && (
-          <div className="modal fade show d-block" tabIndex={-1}>
+          <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
             <div className="modal-dialog modal-lg">
               <div className="modal-content">
                 <div className="modal-header">
@@ -1507,7 +1563,7 @@ const Dashboard = () => {
                     />
                   </div>
                   <div className="row mb-3">
-                    <div className="col-6">
+                    <div className="col-md-6 mb-2 mb-md-0">
                       <label className="form-label">Priority</label>
                       <select
                         className="form-select"
@@ -1520,7 +1576,7 @@ const Dashboard = () => {
                         <option value="Urgent">Urgent</option>
                       </select>
                     </div>
-                    <div className="col-6">
+                    <div className="col-md-6">
                       <label className="form-label">Due Date</label>
                       <input
                         type="date"
@@ -1559,7 +1615,7 @@ const Dashboard = () => {
         {toast.show && (
           <div
             className="toast-container position-fixed bottom-0 end-0 p-3"
-            style={{ zIndex: 1000 }}
+            style={{ zIndex: 1060 }}
           >
             <div className={`toast show text-bg-${toast.type}`}>
               <div className="toast-body">{toast.message}</div>
@@ -1567,6 +1623,15 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+      
+      {/* ✅ Overlay for mobile sidebar */}
+      {sidebarOpen && (
+        <div 
+          className="position-fixed top-0 start-0 w-100 h-100 bg-dark opacity-50 d-md-none"
+          style={{ zIndex: 1040 }}
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
     </div>
   );
 };
