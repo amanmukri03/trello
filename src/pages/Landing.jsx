@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 
 const Landing = () => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
   return (
     <div>
       {/* Hero Section */}
@@ -31,12 +34,16 @@ const Landing = () => {
                 and deliver projects on schedule. Simple, powerful, and built for modern teams.
               </p>
               <div className="d-flex flex-column flex-sm-row gap-3 mb-4">
+                {!isAuthenticated && (
+                  <>
                 <Link to="/register" className="btn btn-warning btn-lg px-5 shadow">
                   Get Started Free
                 </Link>
                 <Link to="/login" className="btn btn-outline-light btn-lg px-5">
                   <span className="me-2">🔐</span> Login
                 </Link>
+                  </>
+                )}
               </div>
               <div className="d-flex flex-wrap gap-4 text-sm">
                 <div>
@@ -415,9 +422,11 @@ const Landing = () => {
                 Start your free 14-day trial today.
               </p>
               <div className="d-flex flex-column flex-sm-row justify-content-center gap-3 mb-4">
+                {!isAuthenticated && (
                 <Link to="/register" className="btn btn-warning btn-lg px-5 shadow">
                    Start Free Trial
                 </Link>
+                )}
                 <Link to="/contact" className="btn btn-outline-light btn-lg px-5">
                    Contact Sales
                 </Link>

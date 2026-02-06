@@ -1,9 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const About = () => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
   return (
-    <div className="container py-5" >
+    <div className="container py-5">
       {/* Hero Section */}
       <div className="row align-items-center mb-5">
         <div className="col-lg-6">
@@ -11,12 +14,12 @@ const About = () => {
             Welcome to Trello
           </h1>
           <p className="lead text-muted">
-            A powerful, intuitive project management platform designed to help teams collaborate, 
+            A powerful, intuitive project management platform designed to help teams collaborate,
             track progress, and deliver results efficiently.
           </p>
         </div>
-  
-        <div className="col-lg-6 text-center" > 
+
+        <div className="col-lg-6 text-center">
           <div className="p-5 bg-light rounded-3 shadow-sm">
             <h2 className="display-1">📋</h2>
             <p className="text-muted">Manage. Track. Deliver.</p>
@@ -24,182 +27,76 @@ const About = () => {
         </div>
       </div>
 
-      {/* Mission Statement */}
+      {/* Mission */}
       <div className="row mb-5">
         <div className="col-12">
           <div className="card border-0 shadow-sm">
             <div className="card-body p-5">
               <h2 className="h3 mb-4">Our Mission</h2>
               <p className="text-muted mb-0">
-                We believe that effective project management shouldn't be complicated. 
-                Trello was built to streamline team workflows, enhance productivity, 
-                and make collaboration seamless. Whether you're a startup or an enterprise, 
-                our platform adapts to your needs.
+                We believe that effective project management shouldn't be complicated.
+                Trello was built to streamline team workflows, enhance productivity,
+                and make collaboration seamless.
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Features Grid */}
+      {/* Features */}
       <div className="row mb-5">
         <div className="col-12 mb-4">
           <h2 className="h3 text-center mb-4">Key Features</h2>
         </div>
-        
-        <div className="col-md-4 mb-4">
-          <div className="card h-100 border-0 shadow-sm">
-            <div className="card-body text-center p-4">
-              <div className="mb-3" style={{fontSize: "3rem"}}>⏱️</div>
-              <h5 className="card-title">Time Tracking</h5>
-              <p className="card-text text-muted">
-                Track time spent on each task with built-in timer functionality. 
-                Multiple sessions supported for accurate time management.
-              </p>
-            </div>
-          </div>
-        </div>
 
-        <div className="col-md-4 mb-4">
-          <div className="card h-100 border-0 shadow-sm">
-            <div className="card-body text-center p-4">
-              <div className="mb-3" style={{fontSize: "3rem"}}>👥</div>
-              <h5 className="card-title">Role-Based Access</h5>
-              <p className="card-text text-muted">
-                Admin, Manager, and Member roles with customized permissions 
-                ensure security and proper workflow management.
-              </p>
+        {[
+          { icon: "⏱️", title: "Time Tracking", text: "Track time spent on each task accurately." },
+          { icon: "👥", title: "Role-Based Access", text: "Manager and Member roles with permissions." },
+          { icon: "🔄", title: "Real-Time Updates", text: "Instant updates with WebSocket support." },
+          { icon: "🎨", title: "Kanban Boards", text: "Drag-and-drop task boards." },
+          { icon: "📊", title: "Task Prioritization", text: "Low, Medium, High, Urgent priorities." },
+          { icon: "📅", title: "Due Date Tracking", text: "Never miss a deadline." },
+        ].map((item, index) => (
+          <div className="col-md-4 mb-4" key={index}>
+            <div className="card h-100 border-0 shadow-sm">
+              <div className="card-body text-center p-4">
+                <div className="mb-3" style={{ fontSize: "3rem" }}>{item.icon}</div>
+                <h5 className="card-title">{item.title}</h5>
+                <p className="card-text text-muted">{item.text}</p>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="col-md-4 mb-4">
-          <div className="card h-100 border-0 shadow-sm">
-            <div className="card-body text-center p-4">
-              <div className="mb-3" style={{fontSize: "3rem"}}>🔄</div>
-              <h5 className="card-title">Real-Time Updates</h5>
-              <p className="card-text text-muted">
-                See changes instantly with WebSocket technology. 
-                Your team stays synchronized without refreshing.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-4 mb-4">
-          <div className="card h-100 border-0 shadow-sm">
-            <div className="card-body text-center p-4">
-              <div className="mb-3" style={{fontSize: "3rem"}}>🎨</div>
-              <h5 className="card-title">Kanban Boards</h5>
-              <p className="card-text text-muted">
-                Visualize your workflow with drag-and-drop Kanban boards. 
-                Customize columns to match your process.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-4 mb-4">
-          <div className="card h-100 border-0 shadow-sm">
-            <div className="card-body text-center p-4">
-              <div className="mb-3" style={{fontSize: "3rem"}}>📊</div>
-              <h5 className="card-title">Task Prioritization</h5>
-              <p className="card-text text-muted">
-                Set priority levels (Low, Medium, High, Urgent) to help 
-                your team focus on what matters most.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-4 mb-4">
-          <div className="card h-100 border-0 shadow-sm">
-            <div className="card-body text-center p-4">
-              <div className="mb-3" style={{fontSize: "3rem"}}>📅</div>
-              <h5 className="card-title">Due Date Tracking</h5>
-              <p className="card-text text-muted">
-                Never miss a deadline with due date notifications 
-                and overdue indicators on tasks.
-              </p>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
 
-      {/* How It Works */}
-      <div className="row mb-5">
-        <div className="col-12 mb-4">
-          <h2 className="h3 text-center mb-4">How It Works</h2>
-        </div>
-
-        <div className="col-md-3 mb-4">
-          <div className="text-center">
-            <div className="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
-                 style={{width: "60px", height: "60px", fontSize: "1.5rem"}}>
-              1
-            </div>
-            <h5>Create a Board</h5>
-            <p className="text-muted small">
-              Set up your project workspace with a custom board name and description.
-            </p>
-          </div>
-        </div>
-
-        <div className="col-md-3 mb-4">
-          <div className="text-center">
-            <div className="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
-                 style={{width: "60px", height: "60px", fontSize: "1.5rem"}}>
-              2
-            </div>
-            <h5>Add Columns</h5>
-            <p className="text-muted small">
-              Create workflow stages like "To Do", "In Progress", and "Done".
-            </p>
-          </div>
-        </div>
-
-        <div className="col-md-3 mb-4">
-          <div className="text-center">
-            <div className="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
-                 style={{width: "60px", height: "60px", fontSize: "1.5rem"}}>
-              3
-            </div>
-            <h5>Create Tasks</h5>
-            <p className="text-muted small">
-              Add tasks with details, assign team members, set priorities and deadlines.
-            </p>
-          </div>
-        </div>
-
-        <div className="col-md-3 mb-4">
-          <div className="text-center">
-            <div className="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
-                 style={{width: "60px", height: "60px", fontSize: "1.5rem"}}>
-              4
-            </div>
-            <h5>Track Progress</h5>
-            <p className="text-muted small">
-              Monitor time spent, move tasks through stages, and complete projects.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="row" style={{backgroundColor:'white', color:'black',borderRadius:'20px'}}>
+      {/* CTA */}
+      <div className="row">
         <div className="col-12">
-          <div className="card border-0 shadow-sm bg-gradient text-black" 
-               style={{background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"}}>
+          <div
+            className="card border-0 shadow-sm text-black"
+            style={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              borderRadius: "20px"
+            }}
+          >
             <div className="card-body text-center p-5">
               <h2 className="h2 mb-3">Ready to Get Started?</h2>
               <p className="mb-4">
                 Join thousands of teams already using Trello to manage their projects.
               </p>
+
               <div>
-                <Link to="/register" className="btn btn-success btn-lg me-3">
-                  Sign Up Free
-                </Link>
-                <Link to="/contact" className="btn btn-outline-primary btn-lg">
+                {!isAuthenticated ? (
+                  <Link to="/register" className="btn btn-success btn-lg me-3">
+                    Sign Up Free
+                  </Link>
+                ) : (
+                  <Link to="/dashboard" className="btn btn-primary btn-lg me-3">
+                    Go to Dashboard
+                  </Link>
+                )}
+
+                <Link to="/contact" className="btn btn-outline-light btn-lg">
                   Contact Us
                 </Link>
               </div>

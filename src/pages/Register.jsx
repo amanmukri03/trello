@@ -488,9 +488,9 @@ const Register = () => {
                   onChange={handleChange}
                   disabled={loading}
                 >
-                  <option value="Member">Member - Regular user access</option>
-                  <option value="Manager">Manager - Team management access</option>
-                  <option value="Admin">Admin - Full system access</option>
+                  <option value="Member">Member - Regular user </option>
+                  <option value="Manager">Manager - Team management </option>
+                  {/* <option value="Admin">Admin - Full system access</option> */}
                 </select>
               </div>
             </div>

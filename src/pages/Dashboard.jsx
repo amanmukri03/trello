@@ -68,11 +68,6 @@ const Dashboard = () => {
         const user = JSON.parse(userStr);
         setUserRole(user.role || "");
         setCurrentUser(user);
-        console.log("✅ Current User:", {
-          role: user.role,
-          id: user._id,
-          name: user.name,
-        });
         return;
       } catch (err) {
         console.error("Failed to parse user:", err);
@@ -729,7 +724,7 @@ const Dashboard = () => {
       <div className="row" style={{ minHeight: "calc(100vh - 56px)" }}>
         {/* ✅ Sidebar - Responsive with mobile toggle */}
         <div 
-          className={`col-lg-3 col-md-4 bg-light border-end p-3 ${sidebarOpen ? 'd-block' : 'd-none d-md-block'}`}
+          className={`col-lg-3 col-md-4  bg-light border-end p-3 ${sidebarOpen ? 'd-block' : 'd-none d-md-block'}`}
           style={{ 
             position: sidebarOpen ? 'fixed' : 'relative',
             top: sidebarOpen ? '0' : 'auto',
