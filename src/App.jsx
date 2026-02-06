@@ -41,7 +41,7 @@ const PublicRoute = ({ children }) => {
 function App() {
   return (
     <HashRouter>
-      <Router>
+      
         <div className="App">
           <Navbar />
           <Routes>
@@ -82,7 +82,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
-      </Router>
+      
     </HashRouter>
   );
 }
