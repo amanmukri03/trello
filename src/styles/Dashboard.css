@@ -1,6 +1,292 @@
-/* ==================== CORE FIXES (ALL DEVICES) ==================== */
 
-/* Sidebar: Board name and three dots alignment */
+/* Sidebar Responsive */
+@media (max-width: 768px) {
+  /* Sidebar - full width on mobile */
+  .col-3.bg-light {
+    width: 100% !important;
+    max-width: 100%;
+    border-right: none !important;
+    border-bottom: 1px solid #dee2e6;
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+
+  /* Main content - full width on mobile */
+  .col-9 {
+    width: 100% !important;
+    max-width: 100%;
+    padding: 0.75rem !important;
+  }
+
+  /* Hide board description on mobile */
+  .text-muted.mb-0 {
+    display: none;
+  }
+
+  /* Columns - 1 column per row on mobile */
+  .col-4 {
+    width: 100% !important;
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  /* Column cards - reduce padding */
+  .card-body {
+    padding: 0.75rem !important;
+    min-height: 300px !important;
+  }
+
+  /* Task cards - smaller text */
+  .card.mb-2.shadow-sm .card-body {
+    padding: 0.5rem !important;
+  }
+
+  .card.mb-2.shadow-sm h6 {
+    font-size: 0.85rem !important;
+  }
+
+  .card.mb-2.shadow-sm p,
+  .card.mb-2.shadow-sm small {
+    font-size: 0.75rem !important;
+  }
+
+  /* Buttons - smaller on mobile */
+  .btn-sm {
+    font-size: 0.65rem !important;
+    padding: 0.2rem 0.4rem !important;
+  }
+
+  /* Board header - stack on mobile */
+  .d-flex.justify-content-between.align-items-center {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.5rem;
+  }
+
+  .d-flex.justify-content-between.align-items-center > div {
+    width: 100%;
+  }
+
+  .d-flex.justify-content-between.align-items-center .btn {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  /* Alert - smaller text */
+  .alert {
+    font-size: 0.75rem !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Modals - better mobile view */
+  .modal-dialog {
+    margin: 0.5rem !important;
+    max-width: calc(100% - 1rem) !important;
+  }
+
+  .modal-lg {
+    max-width: calc(100% - 1rem) !important;
+  }
+
+  /* Board list - reduce padding */
+  .list-group-item {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* User role badge - smaller */
+  .alert-info.py-1.px-2 {
+    font-size: 0.7rem !important;
+  }
+
+  /* Timer display - compact */
+  .mb-2.p-2.bg-light.rounded {
+    padding: 0.5rem !important;
+  }
+
+  /* Priority badges - smaller */
+  .badge {
+    font-size: 0.6rem !important;
+    padding: 0.2rem 0.4rem !important;
+  }
+
+  /* Three dots menu - better positioning */
+  .dropdown {
+    position: relative;
+  }
+
+  .dropdown-menu {
+    font-size: 0.8rem !important;
+    min-width: 120px !important;
+  }
+
+  .dropdown-item {
+    padding: 0.4rem 0.75rem !important;
+  }
+
+  /* Row height adjustment */
+  .row[style*="height"] {
+    height: auto !important;
+  }
+
+  /* Container fluid - remove padding */
+  .container-fluid {
+    padding: 0 !important;
+  }
+
+  /* Scrollable columns on mobile */
+  .row.mt-3 {
+    overflow-x: auto;
+    overflow-y: visible;
+    display: flex;
+    flex-wrap: nowrap;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .row.mt-3 > .col-4 {
+    flex: 0 0 85%;
+    max-width: 85%;
+    scroll-snap-align: start;
+    margin-right: 1rem;
+  }
+
+  /* Add horizontal scroll indicator */
+  .row.mt-3::after {
+    content: "← Swipe for more columns →";
+    display: block;
+    text-align: center;
+    font-size: 0.7rem;
+    color: #6c757d;
+    padding: 0.5rem;
+    width: 100%;
+  }
+}
+
+/* ✅ Tablet Responsive (768px - 992px) */
+@media (min-width: 768px) and (max-width: 992px) {
+  .col-3.bg-light {
+    width: 30% !important;
+  }
+
+  .col-9 {
+    width: 70% !important;
+  }
+
+  .col-4 {
+    width: 50% !important;
+    max-width: 50%;
+  }
+}
+
+/* ✅ Small tablets (576px - 768px) */
+@media (min-width: 576px) and (max-width: 768px) {
+  .col-3.bg-light {
+    width: 35% !important;
+  }
+
+  .col-9 {
+    width: 65% !important;
+  }
+
+  .col-4 {
+    width: 100% !important;
+  }
+}
+
+/* ✅ Very small screens (< 576px) */
+@media (max-width: 576px) {
+  /* Hide sidebar by default, show as dropdown */
+  .sidebar-mobile-toggle {
+    display: block !important;
+  }
+
+  /* Compact header */
+  h4 {
+    font-size: 1.1rem !important;
+  }
+
+  h5 {
+    font-size: 1rem !important;
+  }
+
+  /* Smaller buttons */
+  .btn {
+    font-size: 0.8rem !important;
+    padding: 0.4rem 0.8rem !important;
+  }
+
+  /* Stack form fields */
+  .row.mb-3 > .col-6 {
+    width: 100% !important;
+    max-width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* ✅ Fix for horizontal scroll on columns */
+@media (max-width: 768px) {
+  .DragDropContext {
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+}
+
+/* ✅ Better touch targets for mobile */
+@media (max-width: 768px) {
+  button,
+  .btn,
+  .list-group-item,
+  .dropdown-toggle {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Increase click area for three dots */
+  .dropdown button svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+/* ✅ COMPLETE RESPONSIVE FIX FOR DASHBOARD */
+
+/* ==================== DESKTOP/LAPTOP FIXES ==================== */
+
+/* Fix: Tasks going out of screen on laptop */
+@media (min-width: 993px) {
+  /* Ensure columns don't overflow */
+  .row.mt-3 {
+    overflow-x: auto;
+    overflow-y: visible;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .col-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-bottom: 20px;
+  }
+
+  /* Make card body scrollable if content is too long */
+  .card-body[style*="minHeight"] {
+    max-height: 70vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* Fix task card width */
+  .card.mb-2.shadow-sm {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* ==================== SIDEBAR FIXES ==================== */
+
+/* Fix: Board list item - name and three dots on same line */
 .list-group-item.d-flex {
   display: flex !important;
   justify-content: space-between !important;
@@ -21,22 +307,22 @@
   margin-left: auto;
 }
 
-/* Active board - Light blue background */
+/* Fix: Light blue for selected board (three dots clearly visible) */
 .list-group-item.active {
-  background-color: #cfe2ff !important;
+  background-color: #cfe2ff !important; /* Light blue instead of dark blue */
   border-color: #9ec5fe !important;
-  color: #052c65 !important;
+  color: #052c65 !important; /* Dark text for contrast */
 }
 
 .list-group-item.active .dropdown button {
-  color: #052c65 !important;
+  color: #052c65 !important; /* Dark three dots on light blue */
 }
 
 .list-group-item.active .dropdown button:hover {
   background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
-/* Normal state three dots */
+/* Normal state - ensure three dots are visible */
 .list-group-item .dropdown button {
   color: #6c757d !important;
   padding: 0.25rem !important;
@@ -48,18 +334,324 @@
   border-radius: 4px;
 }
 
-/* Drag and drop - task cards */
+/* ==================== MOBILE RESPONSIVE FIXES ==================== */
+
+@media (max-width: 768px) {
+  /* Sidebar - Collapsible on mobile */
+  .col-3.bg-light {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    z-index: 1050;
+    transition: left 0.3s ease-in-out;
+    overflow-y: auto;
+    background-color: #f8f9fa !important;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  }
+
+  .col-3.bg-light.mobile-sidebar-open {
+    left: 0;
+  }
+
+  /* Overlay for sidebar */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+    display: none;
+  }
+
+  .sidebar-overlay.show {
+    display: block;
+  }
+
+  /* Main content - full width on mobile */
+  .col-9 {
+    width: 100% !important;
+    max-width: 100%;
+    padding: 1rem 0.5rem !important;
+  }
+
+  /* Fix: Board name and three dots on same line in mobile too */
+  .list-group-item.d-flex {
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  .list-group-item.d-flex > span {
+    font-size: 0.9rem;
+    max-width: calc(100% - 40px); /* Leave space for three dots */
+  }
+
+  .list-group-item .dropdown button {
+    min-width: 30px;
+    min-height: 30px;
+  }
+
+  /* Hide board description on mobile */
+  .text-muted.mb-0 {
+    display: none !important;
+  }
+
+  /* Fix: Columns - Horizontal scroll with proper card visibility */
+  .row.mt-3 {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1rem;
+    margin: 0 -0.5rem !important;
+  }
+
+  .col-4 {
+    flex: 0 0 90% !important;
+    max-width: 90% !important;
+    scroll-snap-align: start;
+    padding: 0 0.5rem !important;
+  }
+
+  /* Fix: Card body - Ensure content is visible */
+  .card-body[style*="minHeight"] {
+    min-height: 350px !important;
+    max-height: 60vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 0.75rem !important;
+  }
+
+  /* Fix: Task cards - Ensure full content is visible */
+  .card.mb-2.shadow-sm {
+    width: 100% !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .card.mb-2.shadow-sm .card-body {
+    padding: 0.75rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Ensure all task content is visible */
+  .card.mb-2.shadow-sm h6 {
+    font-size: 0.9rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .card.mb-2.shadow-sm p,
+  .card.mb-2.shadow-sm small,
+  .card.mb-2.shadow-sm .badge {
+    font-size: 0.75rem !important;
+  }
+
+  /* Timer display - compact but visible */
+  .mb-2.p-2.bg-light.rounded {
+    padding: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Buttons - proper size */
+  .btn-sm {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+
+  /* Column header - three dots aligned */
+  .card-header.fw-bold.d-flex {
+    padding: 0.75rem !important;
+  }
+
+  .card-header .d-flex.align-items-center.gap-2 {
+    gap: 0.5rem !important;
+  }
+
+  /* Alert - compact */
+  .alert {
+    font-size: 0.8rem !important;
+    padding: 0.5rem 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Header - stack on very small screens */
+  .d-flex.justify-content-between.align-items-center.mb-3 {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem;
+  }
+
+  .d-flex.justify-content-between.align-items-center.mb-3 > div {
+    width: 100%;
+  }
+
+  .d-flex.justify-content-between.align-items-center.mb-3 .btn {
+    width: 100%;
+  }
+
+  /* Board title */
+  h4 {
+    font-size: 1.25rem !important;
+  }
+
+  /* Modal - full screen friendly */
+  .modal-dialog {
+    margin: 0.5rem !important;
+    max-width: calc(100% - 1rem) !important;
+  }
+
+  .modal-lg {
+    max-width: calc(100% - 1rem) !important;
+  }
+
+  .modal-body {
+    padding: 1rem !important;
+  }
+
+  /* Form fields - stack on mobile */
+  .row.mb-3 > .col-6 {
+    width: 100% !important;
+    max-width: 100%;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Dropdown menu - better positioning */
+  .dropdown-menu {
+    font-size: 0.85rem !important;
+    min-width: 140px !important;
+  }
+
+  .dropdown-item {
+    padding: 0.5rem 1rem !important;
+  }
+
+  /* User role badge */
+  .alert-info.py-1.px-2 {
+    font-size: 0.75rem !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Create board button */
+  .btn-warning.w-100 {
+    margin-top: 1rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Container adjustments */
+  .container-fluid {
+    padding: 0 !important;
+  }
+
+  .row[style*="height"] {
+    height: auto !important;
+  }
+
+  /* Scroll indicator for columns */
+  .row.mt-3::after {
+    content: "← Swipe for more columns →";
+    position: sticky;
+    left: 0;
+    right: 0;
+    bottom: -1.5rem;
+    text-align: center;
+    font-size: 0.7rem;
+    color: #6c757d;
+    padding: 0.25rem;
+    background: linear-gradient(to top, white, transparent);
+  }
+}
+
+/* ==================== TABLET RESPONSIVE ==================== */
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .col-3.bg-light {
+    width: 30% !important;
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
+
+  .col-9 {
+    width: 70% !important;
+    flex: 0 0 70%;
+    max-width: 70%;
+  }
+
+  .col-4 {
+    width: 50% !important;
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  /* Card body scrollable */
+  .card-body[style*="minHeight"] {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+}
+
+/* ==================== SMALL TABLETS ==================== */
+
+@media (min-width: 576px) and (max-width: 768px) {
+  .col-3.bg-light {
+    width: 35% !important;
+  }
+
+  .col-9 {
+    width: 65% !important;
+  }
+
+  .col-4 {
+    width: 100% !important;
+    margin-bottom: 1rem;
+  }
+}
+ 
+
+@media (max-width: 768px) {
+  /* Better touch targets */
+  button,
+  .btn,
+  .list-group-item,
+  .dropdown-toggle {
+    min-height: 44px;
+  }
+
+  /* Three dots - larger touch area */
+  .dropdown button {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dropdown button svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
+/* ==================== DRAG AND DROP FIX ==================== */
+
+/* Ensure draggable items stay within bounds */
 .card.mb-2.shadow-sm {
   max-width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
+/* Dragging state */
 .card.mb-2.shadow-sm[style*="opacity: 0.7"] {
   transform: rotate(2deg);
 }
 
-/* Custom scrollbars */
+/* ==================== SCROLLBAR STYLING ==================== */
+
+/* Custom scrollbar for better UX */
 .card-body::-webkit-scrollbar,
 .row.mt-3::-webkit-scrollbar {
   height: 6px;
@@ -81,350 +673,6 @@
 .card-body::-webkit-scrollbar-thumb:hover,
 .row.mt-3::-webkit-scrollbar-thumb:hover {
   background: #555;
-}
-
-/* ==================== DESKTOP (≥993px) ==================== */
-
-@media (min-width: 993px) {
-  .row.mt-3 {
-    overflow-x: auto;
-    overflow-y: visible;
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .col-4 {
-    flex: 0 0 33.333333%;
-    max-width: 33.333333%;
-    padding: 0 15px;
-    margin-bottom: 20px;
-  }
-
-  .card-body[style*="minHeight"] {
-    max-height: 70vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-
-  .card.mb-2.shadow-sm {
-    width: 100%;
-    max-width: 100%;
-  }
-}
-
-/* ==================== TABLET (768px - 992px) ==================== */
-
-@media (min-width: 768px) and (max-width: 992px) {
-  .col-3.bg-light {
-    flex: 0 0 30%;
-    max-width: 30%;
-  }
-
-  .col-9 {
-    flex: 0 0 70%;
-    max-width: 70%;
-  }
-
-  .col-4 {
-    flex: 0 0 50%;
-    max-width: 50%;
-  }
-
-  .card-body[style*="minHeight"] {
-    max-height: 60vh;
-    overflow-y: auto;
-  }
-}
-
-/* ==================== SMALL TABLET (576px - 768px) ==================== */
-
-@media (min-width: 576px) and (max-width: 768px) {
-  .col-3.bg-light {
-    flex: 0 0 35%;
-    max-width: 35%;
-  }
-
-  .col-9 {
-    flex: 0 0 65%;
-    max-width: 65%;
-  }
-
-  .col-4 {
-    width: 100% !important;
-    margin-bottom: 1rem;
-  }
-}
-
-/* ==================== MOBILE (≤768px) ==================== */
-
-@media (max-width: 768px) {
-  /* Sidebar - Collapsible */
-  .col-3.bg-light {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 80%;
-    max-width: 300px;
-    height: 100vh;
-    z-index: 1050;
-    transition: left 0.3s ease-in-out;
-    overflow-y: auto;
-    background-color: #f8f9fa !important;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .col-3.bg-light.mobile-sidebar-open {
-    left: 0;
-  }
-
-  .sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1040;
-    display: none;
-  }
-
-  .sidebar-overlay.show {
-    display: block;
-  }
-
-  /* Main content - full width */
-  .col-9 {
-    width: 100% !important;
-    max-width: 100%;
-    padding: 1rem 0.5rem !important;
-  }
-
-  /* Container */
-  .container-fluid {
-    padding: 0 !important;
-  }
-
-  .row[style*="height"] {
-    height: auto !important;
-  }
-
-  /* Board list items */
-  .list-group-item.d-flex {
-    padding: 0.5rem 0.75rem !important;
-  }
-
-  .list-group-item.d-flex > span {
-    font-size: 0.9rem;
-    max-width: calc(100% - 40px);
-  }
-
-  .list-group-item .dropdown button {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .dropdown button svg {
-    width: 20px !important;
-    height: 20px !important;
-  }
-
-  /* Hide board description */
-  .text-muted.mb-0 {
-    display: none !important;
-  }
-
-  /* Columns - Horizontal scroll */
-  .row.mt-3 {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    overflow-y: visible !important;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-    padding-bottom: 1rem;
-    margin: 0 -0.5rem !important;
-  }
-
-  .col-4 {
-    flex: 0 0 90% !important;
-    max-width: 90% !important;
-    scroll-snap-align: start;
-    padding: 0 0.5rem !important;
-  }
-
-  /* Scroll indicator */
-  .row.mt-3::after {
-    content: "← Swipe for more columns →";
-    position: sticky;
-    left: 0;
-    right: 0;
-    bottom: -1.5rem;
-    text-align: center;
-    font-size: 0.7rem;
-    color: #6c757d;
-    padding: 0.25rem;
-    background: linear-gradient(to top, white, transparent);
-  }
-
-  /* Card body - scrollable */
-  .card-body[style*="minHeight"] {
-    min-height: 350px !important;
-    max-height: 60vh !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    padding: 0.75rem !important;
-  }
-
-  /* Task cards */
-  .card.mb-2.shadow-sm {
-    width: 100% !important;
-    margin-bottom: 0.75rem !important;
-  }
-
-  .card.mb-2.shadow-sm .card-body {
-    padding: 0.75rem !important;
-    font-size: 0.85rem !important;
-  }
-
-  .card.mb-2.shadow-sm h6 {
-    font-size: 0.9rem !important;
-    margin-bottom: 0.5rem !important;
-  }
-
-  .card.mb-2.shadow-sm p,
-  .card.mb-2.shadow-sm small,
-  .card.mb-2.shadow-sm .badge {
-    font-size: 0.75rem !important;
-  }
-
-  /* Column header */
-  .card-header.fw-bold.d-flex {
-    padding: 0.75rem !important;
-  }
-
-  .card-header .d-flex.align-items-center.gap-2 {
-    gap: 0.5rem !important;
-  }
-
-  /* Buttons */
-  .btn-sm {
-    font-size: 0.75rem !important;
-    padding: 0.25rem 0.5rem !important;
-  }
-
-  .btn {
-    font-size: 0.8rem !important;
-    padding: 0.4rem 0.8rem !important;
-  }
-
-  /* Touch targets */
-  button,
-  .btn,
-  .list-group-item,
-  .dropdown-toggle {
-    min-height: 44px;
-  }
-
-  /* Timer */
-  .mb-2.p-2.bg-light.rounded {
-    padding: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
-  }
-
-  /* Alerts */
-  .alert {
-    font-size: 0.8rem !important;
-    padding: 0.5rem 0.75rem !important;
-    margin-bottom: 0.75rem !important;
-  }
-
-  /* User role badge */
-  .alert-info.py-1.px-2 {
-    font-size: 0.75rem !important;
-    padding: 0.5rem !important;
-  }
-
-  /* Headers */
-  h4 {
-    font-size: 1.25rem !important;
-  }
-
-  h5 {
-    font-size: 1rem !important;
-  }
-
-  /* Page header - stack vertically */
-  .d-flex.justify-content-between.align-items-center.mb-3 {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 0.75rem;
-  }
-
-  .d-flex.justify-content-between.align-items-center.mb-3 > div {
-    width: 100%;
-  }
-
-  .d-flex.justify-content-between.align-items-center.mb-3 .btn {
-    width: 100%;
-  }
-
-  /* Modals */
-  .modal-dialog {
-    margin: 0.5rem !important;
-    max-width: calc(100% - 1rem) !important;
-  }
-
-  .modal-lg {
-    max-width: calc(100% - 1rem) !important;
-  }
-
-  .modal-body {
-    padding: 1rem !important;
-  }
-
-  /* Form fields - stack */
-  .row.mb-3 > .col-6 {
-    width: 100% !important;
-    max-width: 100%;
-    margin-bottom: 0.75rem;
-  }
-
-  /* Dropdown menu */
-  .dropdown-menu {
-    font-size: 0.85rem !important;
-    min-width: 140px !important;
-  }
-
-  .dropdown-item {
-    padding: 0.5rem 1rem !important;
-  }
-
-  /* Create board button */
-  .btn-warning.w-100 {
-    margin-top: 1rem !important;
-    font-size: 0.9rem !important;
-  }
-
-  /* Priority badges */
-  .badge {
-    font-size: 0.6rem !important;
-    padding: 0.2rem 0.4rem !important;
-  }
-}
-
-/* ==================== VERY SMALL SCREENS (<576px) ==================== */
-
-@media (max-width: 576px) {
-  h4 {
-    font-size: 1.1rem !important;
-  }
-
-  h5 {
-    font-size: 1rem !important;
-  }
 }
 
 /* ==================== PRINT STYLES ==================== */
