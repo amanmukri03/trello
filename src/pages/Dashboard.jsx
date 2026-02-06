@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../api/axios";
 import socket from "../socket";
+import '../styles/Dashboard.css'
 
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 

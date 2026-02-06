@@ -1,0 +1,251 @@
+/* ✅ Mobile Responsive Fixes for Dashboard */
+
+/* Sidebar Responsive */
+@media (max-width: 768px) {
+  /* Sidebar - full width on mobile */
+  .col-3.bg-light {
+    width: 100% !important;
+    max-width: 100%;
+    border-right: none !important;
+    border-bottom: 1px solid #dee2e6;
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+
+  /* Main content - full width on mobile */
+  .col-9 {
+    width: 100% !important;
+    max-width: 100%;
+    padding: 0.75rem !important;
+  }
+
+  /* Hide board description on mobile */
+  .text-muted.mb-0 {
+    display: none;
+  }
+
+  /* Columns - 1 column per row on mobile */
+  .col-4 {
+    width: 100% !important;
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  /* Column cards - reduce padding */
+  .card-body {
+    padding: 0.75rem !important;
+    min-height: 300px !important;
+  }
+
+  /* Task cards - smaller text */
+  .card.mb-2.shadow-sm .card-body {
+    padding: 0.5rem !important;
+  }
+
+  .card.mb-2.shadow-sm h6 {
+    font-size: 0.85rem !important;
+  }
+
+  .card.mb-2.shadow-sm p,
+  .card.mb-2.shadow-sm small {
+    font-size: 0.75rem !important;
+  }
+
+  /* Buttons - smaller on mobile */
+  .btn-sm {
+    font-size: 0.65rem !important;
+    padding: 0.2rem 0.4rem !important;
+  }
+
+  /* Board header - stack on mobile */
+  .d-flex.justify-content-between.align-items-center {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.5rem;
+  }
+
+  .d-flex.justify-content-between.align-items-center > div {
+    width: 100%;
+  }
+
+  .d-flex.justify-content-between.align-items-center .btn {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  /* Alert - smaller text */
+  .alert {
+    font-size: 0.75rem !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Modals - better mobile view */
+  .modal-dialog {
+    margin: 0.5rem !important;
+    max-width: calc(100% - 1rem) !important;
+  }
+
+  .modal-lg {
+    max-width: calc(100% - 1rem) !important;
+  }
+
+  /* Board list - reduce padding */
+  .list-group-item {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* User role badge - smaller */
+  .alert-info.py-1.px-2 {
+    font-size: 0.7rem !important;
+  }
+
+  /* Timer display - compact */
+  .mb-2.p-2.bg-light.rounded {
+    padding: 0.5rem !important;
+  }
+
+  /* Priority badges - smaller */
+  .badge {
+    font-size: 0.6rem !important;
+    padding: 0.2rem 0.4rem !important;
+  }
+
+  /* Three dots menu - better positioning */
+  .dropdown {
+    position: relative;
+  }
+
+  .dropdown-menu {
+    font-size: 0.8rem !important;
+    min-width: 120px !important;
+  }
+
+  .dropdown-item {
+    padding: 0.4rem 0.75rem !important;
+  }
+
+  /* Row height adjustment */
+  .row[style*="height"] {
+    height: auto !important;
+  }
+
+  /* Container fluid - remove padding */
+  .container-fluid {
+    padding: 0 !important;
+  }
+
+  /* Scrollable columns on mobile */
+  .row.mt-3 {
+    overflow-x: auto;
+    overflow-y: visible;
+    display: flex;
+    flex-wrap: nowrap;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .row.mt-3 > .col-4 {
+    flex: 0 0 85%;
+    max-width: 85%;
+    scroll-snap-align: start;
+    margin-right: 1rem;
+  }
+
+  /* Add horizontal scroll indicator */
+  .row.mt-3::after {
+    content: "← Swipe for more columns →";
+    display: block;
+    text-align: center;
+    font-size: 0.7rem;
+    color: #6c757d;
+    padding: 0.5rem;
+    width: 100%;
+  }
+}
+
+/* ✅ Tablet Responsive (768px - 992px) */
+@media (min-width: 768px) and (max-width: 992px) {
+  .col-3.bg-light {
+    width: 30% !important;
+  }
+
+  .col-9 {
+    width: 70% !important;
+  }
+
+  .col-4 {
+    width: 50% !important;
+    max-width: 50%;
+  }
+}
+
+/* ✅ Small tablets (576px - 768px) */
+@media (min-width: 576px) and (max-width: 768px) {
+  .col-3.bg-light {
+    width: 35% !important;
+  }
+
+  .col-9 {
+    width: 65% !important;
+  }
+
+  .col-4 {
+    width: 100% !important;
+  }
+}
+
+/* ✅ Very small screens (< 576px) */
+@media (max-width: 576px) {
+  /* Hide sidebar by default, show as dropdown */
+  .sidebar-mobile-toggle {
+    display: block !important;
+  }
+
+  /* Compact header */
+  h4 {
+    font-size: 1.1rem !important;
+  }
+
+  h5 {
+    font-size: 1rem !important;
+  }
+
+  /* Smaller buttons */
+  .btn {
+    font-size: 0.8rem !important;
+    padding: 0.4rem 0.8rem !important;
+  }
+
+  /* Stack form fields */
+  .row.mb-3 > .col-6 {
+    width: 100% !important;
+    max-width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* ✅ Fix for horizontal scroll on columns */
+@media (max-width: 768px) {
+  .DragDropContext {
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+}
+
+/* ✅ Better touch targets for mobile */
+@media (max-width: 768px) {
+  button,
+  .btn,
+  .list-group-item,
+  .dropdown-toggle {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Increase click area for three dots */
+  .dropdown button svg {
+    width: 20px;
+    height: 20px;
+  }
+}
